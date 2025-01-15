@@ -2,8 +2,13 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import "react-toastify/dist/ReactToastify.css";
+import { Player } from "@lottiefiles/react-lottie-player";
+
+import useAuth from "../hooks/useAuth";
+import registerani from "../animation/register.json";
 
 const Register = () => {
+  const { name } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,13 +18,11 @@ const Register = () => {
 
   const [error, setError] = useState("");
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Validate password
   const validatePassword = (password) => {
     const hasUppercase = /[A-Z]/.test(password);
     const hasLowercase = /[a-z]/.test(password);
@@ -33,11 +36,8 @@ const Register = () => {
     return "";
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validate password
     const passwordError = validatePassword(formData.password);
     if (passwordError) {
       setError(passwordError);
@@ -47,7 +47,6 @@ const Register = () => {
 
     setError("");
 
-    // Handle image upload to imgbb
     try {
       const imgbbAPIKey = import.meta.env.VITE_IMGBB_KEY;
       const formDataImg = new FormData();
@@ -64,7 +63,6 @@ const Register = () => {
       const imgData = await imgResponse.json();
       if (imgData.success) {
         console.log("Image URL:", imgData.data.url);
-
         Swal.fire(
           "Registration Successful",
           "You have been registered!",
@@ -80,10 +78,21 @@ const Register = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-700">
-          Register
+    <div className="flex flex-col max-w-screen-xl mx-auto lg:flex-row items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-4">
+      {/* Lottie Animation */}
+      <div className="w-full lg:w-1/2 flex justify-center mb-6 lg:mb-0">
+        <Player
+          autoplay
+          loop
+          src={registerani}
+          className="w-3/4 sm:w-1/2 md:w-2/5 lg:w-3/4 max-w-sm"
+        />
+      </div>
+
+      {/* Form Section */}
+      <div className="w-full lg:w-1/2 max-w-md p-6 bg-white rounded-lg shadow-lg">
+        <h2 className="text-3xl font-bold text-center text-gray-700">
+          Create an Account
         </h2>
         <form className="mt-6" onSubmit={handleSubmit}>
           {/* Name */}
@@ -171,7 +180,7 @@ const Register = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+            className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
           >
             Register
           </button>
@@ -180,7 +189,7 @@ const Register = () => {
         {/* Link to Login */}
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-500 hover:underline">
+          <a href="/login" className="text-blue-600 hover:underline">
             Login here
           </a>
         </p>
