@@ -1,27 +1,21 @@
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import "react-toastify/dist/ReactToastify.css";
 import { Player } from "@lottiefiles/react-lottie-player";
-
 import useAuth from "../hooks/useAuth";
 import registerani from "../animation/register.json";
 
 const Register = () => {
-  const { name } = useAuth();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    photoURL: "",
-    password: "",
-  });
-
+  const { signInWithGoogle, signUpWithEmailPassword } = useAuth();
   const [error, setError] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const validatePassword = (password) => {
     const hasUppercase = /[A-Z]/.test(password);
@@ -33,26 +27,23 @@ const Register = () => {
     if (!hasLowercase)
       return "Password must have at least one lowercase letter.";
     if (!hasMinLength) return "Password must be at least 6 characters long.";
-    return "";
+    return true;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const passwordError = validatePassword(formData.password);
-    if (passwordError) {
-      setError(passwordError);
-      toast.error(passwordError);
-      return;
-    }
-
-    setError("");
-
+  const onSubmit = async (data) => {
     try {
       const imgbbAPIKey = import.meta.env.VITE_IMGBB_KEY;
       const formDataImg = new FormData();
-      formDataImg.append("image", formData.photoURL);
 
-      const imgResponse = await fetch(
+      // Check if a file is selected and append it to the form data
+      if (data.photoURL && data.photoURL[0]) {
+        formDataImg.append("image", data.photoURL[0]);
+      } else {
+        throw new Error("No image selected.");
+      }
+
+      // Upload the image to imgbb using fetch
+      const response = await fetch(
         `https://api.imgbb.com/1/upload?key=${imgbbAPIKey}`,
         {
           method: "POST",
@@ -60,23 +51,54 @@ const Register = () => {
         }
       );
 
-      const imgData = await imgResponse.json();
-      if (imgData.success) {
-        console.log("Image URL:", imgData.data.url);
-        Swal.fire(
-          "Registration Successful",
-          "You have been registered!",
-          "success"
+      if (!response.ok) {
+        throw new Error("Image upload failed. Status: " + response.status);
+      }
+
+      const imgResponse = await response.json(); // Parse the JSON response
+
+      if (imgResponse.success) {
+        const imageUrl = imgResponse.data.url;
+        console.log("Image URL:", imageUrl);
+
+        const userData = {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          photoURL: imageUrl,
+        };
+
+        // Proceed with the user registration logic
+        signUpWithEmailPassword(
+          userData.name,
+          userData.email,
+          userData.password,
+          userData.photoURL
         );
       } else {
         throw new Error("Image upload failed.");
       }
     } catch (error) {
-      toast.error("Image upload failed. Please try again.");
-      console.error(error);
+      toast.error(error.message || "An error occurred. Please try again.");
+      console.error("Image Upload Error:", error);
     }
   };
-
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithGoogle();
+      Swal.fire(
+        "Google Login",
+        "You have successfully logged in with Google!",
+        "success"
+      );
+    } catch (error) {
+      Swal.fire(
+        "Login Failed",
+        "There was an issue logging in with Google. Please try again.",
+        "error"
+      );
+    }
+  };
   return (
     <div className="flex flex-col max-w-screen-xl mx-auto lg:flex-row items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-4">
       {/* Lottie Animation */}
@@ -94,7 +116,7 @@ const Register = () => {
         <h2 className="text-3xl font-bold text-center text-gray-700">
           Create an Account
         </h2>
-        <form className="mt-6" onSubmit={handleSubmit}>
+        <form className="mt-6" onSubmit={handleSubmit(onSubmit)}>
           {/* Name */}
           <div className="mb-4">
             <label
@@ -105,14 +127,14 @@ const Register = () => {
             </label>
             <input
               type="text"
-              name="name"
               id="name"
               className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
               placeholder="Enter your name"
-              value={formData.name}
-              onChange={handleChange}
-              required
+              {...register("name", { required: "Name is required" })}
             />
+            {errors.name && (
+              <p className="text-sm text-red-500">{errors.name.message}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -125,14 +147,20 @@ const Register = () => {
             </label>
             <input
               type="email"
-              name="email"
               id="email"
               className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
               placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              required
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Invalid email",
+                },
+              })}
             />
+            {errors.email && (
+              <p className="text-sm text-red-500">{errors.email.message}</p>
+            )}
           </div>
 
           {/* Photo URL */}
@@ -147,11 +175,11 @@ const Register = () => {
               type="file"
               id="photoURL"
               className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-              onChange={(e) =>
-                setFormData({ ...formData, photoURL: e.target.files[0] })
-              }
-              required
+              {...register("photoURL", { required: "Photo is required" })}
             />
+            {errors.photoURL && (
+              <p className="text-sm text-red-500">{errors.photoURL.message}</p>
+            )}
           </div>
 
           {/* Password */}
@@ -164,20 +192,29 @@ const Register = () => {
             </label>
             <input
               type="password"
-              name="password"
               id="password"
               className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
               placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              required
+              {...register("password", {
+                required: "Password is required",
+                validate: validatePassword,
+              })}
             />
+            {errors.password && (
+              <p className="text-sm text-red-500">{errors.password.message}</p>
+            )}
           </div>
 
           {/* Error Message */}
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           {/* Submit Button */}
+          <button
+            onClick={handleGoogleLogin}
+            className="w-full mt-4 px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300 mb-2"
+          >
+            Login with Google
+          </button>
           <button
             type="submit"
             className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"

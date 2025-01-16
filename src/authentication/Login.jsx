@@ -7,7 +7,7 @@ import useAuth from "../hooks/useAuth";
 import loginani from "../animation/login.json";
 
 const Login = () => {
-  const { name } = useAuth();
+  const { signInWithGoogle } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -29,12 +29,21 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    Swal.fire(
-      "Google Login",
-      "You have successfully logged in with Google!",
-      "success"
-    );
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithGoogle();
+      Swal.fire(
+        "Google Login",
+        "You have successfully logged in with Google!",
+        "success"
+      );
+    } catch (error) {
+      Swal.fire(
+        "Login Failed",
+        "There was an issue logging in with Google. Please try again.",
+        "error"
+      );
+    }
   };
 
   return (
