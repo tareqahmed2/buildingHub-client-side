@@ -72,12 +72,12 @@ const Navbar = () => {
                   </div>
                   <ul className="flex flex-col">
                     <li>
-                      <a
-                        href="/dashboard"
+                      <Link
+                        to="/dashboard"
                         className="block px-4 py-2 hover:bg-gray-100"
                       >
                         Dashboard
-                      </a>
+                      </Link>
                     </li>
                     <li>
                       <button
