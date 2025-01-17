@@ -1,28 +1,41 @@
 import React, { useState } from "react";
 import useAuth from "../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.webp";
+import { NavLink } from "react-router-dom";
+
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, loading, signOutUser } = useAuth();
   const navigate = useNavigate();
+
   const links = (
     <>
       <li>
-        <a href="/" className="hover:text-blue-600">
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            isActive ? "text-blue-600" : "hover:text-blue-600"
+          }
+        >
           Home
-        </a>
+        </NavLink>
       </li>
       <li>
-        <a href="/apartments" className="hover:text-blue-600">
+        <NavLink
+          to="/apartment"
+          className={({ isActive }) =>
+            isActive ? "text-blue-600" : "hover:text-blue-600"
+          }
+        >
           Apartments
-        </a>
+        </NavLink>
       </li>
     </>
   );
 
   return (
-    <div className="bg-white shadow-lg mb-5">
+    <div className="bg-white shadow-lg mb-5 sticky top-0 z-50">
       <div className="navbar max-w-screen-xl mx-auto">
         <div className="navbar-start">
           <img
