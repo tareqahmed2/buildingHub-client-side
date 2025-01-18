@@ -41,6 +41,8 @@ const Apartment = () => {
   );
 
   const handleAgreement = (apartment) => {
+    const currentDate = new Date().toLocaleDateString();
+
     if (!user) {
       navigate("/login");
       return;
@@ -59,6 +61,7 @@ const Apartment = () => {
         rent: apartment.rent,
         aptImg: apartment.image,
         status: "pending",
+        dateApplied: currentDate,
       })
       .then((response) => {
         if (response.data.insertedId) {
