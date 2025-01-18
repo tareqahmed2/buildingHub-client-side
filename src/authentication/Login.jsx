@@ -5,14 +5,17 @@ import "react-toastify/dist/ReactToastify.css";
 import { Player } from "@lottiefiles/react-lottie-player";
 import useAuth from "../hooks/useAuth";
 import loginani from "../animation/login.json";
-
+import { useNavigate } from "react-router-dom";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 const Login = () => {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, signInWithEmailPassword } = useAuth();
+  const navigate = useNavigate();
+  const from = location.state?.from?.pathname || "/";
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
+  const [showPassword, setShowPassword] = useState(false); // State for password toggling
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
@@ -20,12 +23,27 @@ const Login = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Clear any existing error
+    setError("");
+
     if (!formData.email || !formData.password) {
-      toast.error("Email and Password are required.");
+      setError("Email and Password are required.");
       return;
+    }
+    try {
+      const userCredential = await signInWithEmailPassword(
+        formData.email,
+        formData.password
+      );
+      console.log("User logged in:", userCredential.user);
+      toast.success("Login successful!");
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error("Login failed:", error);
+      setError("Invalid email or password.");
     }
   };
 
@@ -37,6 +55,7 @@ const Login = () => {
         "You have successfully logged in with Google!",
         "success"
       );
+      navigate(from, { replace: true });
     } catch (error) {
       Swal.fire(
         "Login Failed",
@@ -48,7 +67,6 @@ const Login = () => {
 
   return (
     <div className="flex max-w-screen-xl mx-auto flex-col lg:flex-row items-center justify-center min-h-screen bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400 p-4">
-      {/* Lottie Animation */}
       <div className="w-full lg:w-1/2 flex justify-center mb-6 lg:mb-0">
         <Player
           autoplay
@@ -58,7 +76,6 @@ const Login = () => {
         />
       </div>
 
-      {/* Form Section */}
       <div className="w-full lg:w-1/2 max-w-md p-6 bg-white rounded-lg shadow-lg">
         <h2 className="text-3xl font-bold text-center text-gray-700">
           Welcome Back
@@ -68,7 +85,6 @@ const Login = () => {
         </p>
 
         <form className="mt-6" onSubmit={handleSubmit}>
-          {/* Email */}
           <div className="mb-4">
             <label
               htmlFor="email"
@@ -88,8 +104,7 @@ const Login = () => {
             />
           </div>
 
-          {/* Password */}
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-600"
@@ -97,7 +112,7 @@ const Login = () => {
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               id="password"
               className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
@@ -106,12 +121,17 @@ const Login = () => {
               onChange={handleChange}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-[45px] transform -translate-y-1/2 text-gray-600 hover:text-gray-800"
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
           </div>
 
-          {/* Error Message */}
           {error && <p className="text-sm text-red-500">{error}</p>}
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
@@ -120,7 +140,6 @@ const Login = () => {
           </button>
         </form>
 
-        {/* Google Login */}
         <button
           onClick={handleGoogleLogin}
           className="w-full mt-4 px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
@@ -128,7 +147,6 @@ const Login = () => {
           Login with Google
         </button>
 
-        {/* Link to Register */}
         <p className="mt-4 text-center text-sm text-gray-600">
           Don't have an account?{" "}
           <a href="/register" className="text-blue-500 hover:underline">

@@ -61,7 +61,69 @@ const Dashboard = () => {
                 Payment History
               </NavLink>
             </li>
+            {/* admin route */}
+            <li>
+              <NavLink
+                to="admin-profile"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                }
+              >
+                Admin Profile
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="manage-members"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                }
+              >
+                Manage Members
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="make-announcement"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                }
+              >
+                Make Announcement
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="agreement-requests"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                }
+              >
+                Agreement Requests
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="manage-coupons"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                }
+              >
+                Manage Coupons
+              </NavLink>
+            </li>
 
+            {/* end of admin route */}
             <li>
               <NavLink
                 to="announcement"

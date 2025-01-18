@@ -111,6 +111,7 @@ const AuthProvider = ({ children }) => {
   const authInfo = {
     user,
     loading,
+    setLoading,
     signUpWithEmailPassword,
     signInWithEmailPassword,
     signInWithGoogle,

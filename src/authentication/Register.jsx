@@ -6,11 +6,14 @@ import "react-toastify/dist/ReactToastify.css";
 import { Player } from "@lottiefiles/react-lottie-player";
 import useAuth from "../hooks/useAuth";
 import registerani from "../animation/register.json";
+import { useNavigate } from "react-router-dom";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const Register = () => {
+  const navigate = useNavigate();
   const { signInWithGoogle, signUpWithEmailPassword } = useAuth();
   const [error, setError] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -69,12 +72,27 @@ const Register = () => {
         };
 
         // Proceed with the user registration logic
-        signUpWithEmailPassword(
-          userData.name,
-          userData.email,
-          userData.password,
-          userData.photoURL
-        );
+        try {
+          await signUpWithEmailPassword(
+            userData.name,
+            userData.email,
+            userData.password,
+            userData.photoURL
+          );
+
+          // Show success alert
+          Swal.fire({
+            title: "Success!",
+            text: "Your account has been created successfully.",
+            icon: "success",
+            confirmButtonText: "Ok",
+          });
+
+          navigate("/", { replace: true });
+        } catch (error) {
+          console.error("Signup failed:", error);
+          toast.error("Failed to create an account. Please try again.");
+        }
       } else {
         throw new Error("Image upload failed.");
       }
@@ -183,7 +201,7 @@ const Register = () => {
           </div>
 
           {/* Password */}
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-600"
@@ -191,7 +209,7 @@ const Register = () => {
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
               placeholder="Enter your password"
@@ -200,6 +218,13 @@ const Register = () => {
                 validate: validatePassword,
               })}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-[45px] transform -translate-y-1/2 text-gray-600 hover:text-gray-800"
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
             {errors.password && (
               <p className="text-sm text-red-500">{errors.password.message}</p>
             )}

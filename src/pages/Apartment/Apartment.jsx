@@ -1,74 +1,28 @@
 import React, { useState } from "react";
-
-// Dummy apartment data
-const apartments = [
-  {
-    id: 1,
-    image: "https://i.ibb.co.com/cttNZwD/sega.jpg",
-    floor: 1,
-    block: "A",
-    aptNo: "101",
-    rent: 1500,
-  },
-  {
-    id: 2,
-    image: "https://i.ibb.co.com/cttNZwD/sega.jpg",
-    floor: 2,
-    block: "B",
-    aptNo: "202",
-    rent: 2000,
-  },
-  {
-    id: 3,
-    image: "https://i.ibb.co.com/cttNZwD/sega.jpg",
-    floor: 1,
-    block: "C",
-    aptNo: "103",
-    rent: 1800,
-  },
-  {
-    id: 4,
-    image: "https://i.ibb.co.com/cttNZwD/sega.jpg",
-    floor: 3,
-    block: "A",
-    aptNo: "301",
-    rent: 2500,
-  },
-  {
-    id: 5,
-    image: "https://i.ibb.co.com/cttNZwD/sega.jpg",
-    floor: 2,
-    block: "B",
-    aptNo: "204",
-    rent: 2200,
-  },
-  {
-    id: 6,
-    image: "https://i.ibb.co.com/cttNZwD/sega.jpg",
-    floor: 1,
-    block: "C",
-    aptNo: "105",
-    rent: 1600,
-  },
-  {
-    id: 7,
-    image: "https://i.ibb.co.com/cttNZwD/sega.jpg",
-    floor: 4,
-    block: "A",
-    aptNo: "401",
-    rent: 2700,
-  },
-  {
-    id: 8,
-    image: "https://i.ibb.co.com/cttNZwD/sega.jpg",
-    floor: 3,
-    block: "B",
-    aptNo: "305",
-    rent: 2400,
-  },
-];
+import useAxiosPublic from "../../hooks/useAxiosPublic";
+import axios from "axios";
+import useAuth from "../../hooks/useAuth";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const Apartment = () => {
+  const navigate = useNavigate();
+
+  const { user, setLoading } = useAuth();
+
+  const [apartments, setApartments] = useState([]);
+  const axiosPublic = useAxiosPublic();
+  axiosPublic
+    .get("/apartments")
+    .then((res) => {
+      setApartments(res.data);
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.log(error.message);
+      setLoading(false);
+    });
   const [searchRange, setSearchRange] = useState([1000, 3000]); // rent range state
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -87,8 +41,45 @@ const Apartment = () => {
   );
 
   const handleAgreement = (apartment) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
     // Logic for storing agreement in the database
-    alert(`Applied for Apartment No: ${apartment.aptNo}`);
+    axiosPublic
+      .post("/agreement", {
+        userName: user?.displayName,
+        userEmail: user?.email,
+        userPhoto: user?.photoURL,
+        // apartment data
+        aptId: apartment._id,
+        floor: apartment.floor,
+        block: apartment.block,
+        aptNo: apartment.aptNo,
+        rent: apartment.rent,
+        aptImg: apartment.image,
+        status: "pending",
+      })
+      .then((response) => {
+        if (response.data.insertedId) {
+          Swal.fire({
+            title: "Success!",
+            text: `You have successfully applied for Apartment No: ${apartment.aptNo}`,
+            icon: "success",
+            confirmButtonText: "Ok",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error applying for apartment:", error);
+        toast.error("You have already applied for Apartment");
+        Swal.fire({
+          title: "Error!",
+          text: "There was an issue applying for the apartment.",
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
+      });
   };
 
   const handlePageChange = (page) => {
@@ -133,7 +124,7 @@ const Apartment = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {filteredApartments.map((apartment) => (
           <div
-            key={apartment.id}
+            key={apartment._id}
             className="bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition-all"
           >
             <img
