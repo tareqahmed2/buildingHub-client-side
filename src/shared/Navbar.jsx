@@ -8,7 +8,6 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, loading, signOutUser } = useAuth();
   const navigate = useNavigate();
-
   const links = (
     <>
       <li>
@@ -73,7 +72,7 @@ const Navbar = () => {
                   <ul className="flex flex-col">
                     <li>
                       <Link
-                        to="/dashboard"
+                        to="/dashboard/profile"
                         className="block px-4 py-2 hover:bg-gray-100"
                       >
                         Dashboard

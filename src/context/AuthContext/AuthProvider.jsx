@@ -20,50 +20,85 @@ const AuthProvider = ({ children }) => {
 
   const googleProvider = new GoogleAuthProvider();
 
-  const signUpWithEmailPassword = (name, email, password, photoURL) => {
-    return createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        updateProfile(user, {
-          displayName: name,
-          photoURL: photo,
-        }).then(() => {
-          setUser({
-            ...user,
-            displayName: name,
-            photoURL: photo,
-          });
-        });
-      })
-      .catch((error) => {
-        console.error("Error during sign-up:", error);
-        throw error;
+  const signUpWithEmailPassword = async (name, email, password, photo) => {
+    try {
+      setLoading(true);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      await updateProfile(user, {
+        displayName: name,
+        photoURL: photo,
       });
+      setUser({
+        ...user,
+        displayName: name,
+        photoURL: photo,
+      });
+    } catch (error) {
+      console.error("Error during sign-up:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const signInWithEmailPassword = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
+  const signInWithEmailPassword = async (email, password) => {
+    try {
+      setLoading(true);
+      return await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signInWithGoogle = async () => {
-    return await signInWithPopup(auth, googleProvider).then((result) => {
+    try {
+      setLoading(true);
+      const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      setUser(user);
-    });
+      setUser({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+      });
+    } catch (error) {
+      console.error("Error during Google sign-in:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const signOutUser = () => {
-    return auth.signOut();
+  const signOutUser = async () => {
+    try {
+      setLoading(true);
+      await auth.signOut();
+      setUser(null);
+    } catch (error) {
+      console.error("Error during sign-out:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setLoading(true);
       if (currentUser) {
         setUser({
           uid: currentUser.uid,
           email: currentUser.email,
           displayName: currentUser.displayName,
-          photoURL: currentUser.photoURL || "/default-profile.png", // Fallback image
+          photoURL: currentUser.photoURL || "/default-profile.png",
         });
       } else {
         setUser(null);
