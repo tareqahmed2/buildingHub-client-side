@@ -104,6 +104,7 @@ const AuthProvider = ({ children }) => {
       setLoading(true);
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
+      console.log(user.photoURL);
       setUser({
         uid: user.uid,
         email: user.email,

@@ -3,11 +3,14 @@ import useAuth from "../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.webp";
 import { NavLink } from "react-router-dom";
+import HamburgerMenu from "react-hamburger-menu"; // Import the React Hamburger Menu
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [hamburgerOpen, setHamburgerOpen] = useState(false); // State for hamburger menu
   const { user, loading, signOutUser } = useAuth();
   const navigate = useNavigate();
+
   const links = (
     <>
       <li>
@@ -40,7 +43,7 @@ const Navbar = () => {
           <img
             src={logo}
             alt="Profile"
-            className="h-12 w-12 rounded-full cursor-pointer border-2"
+            className="h-12 w-12 rounded-full cursor-pointer border-2 hidden md:block"
             onClick={() => navigate("/")}
           />
           <a href="/" className="ml-2 text-xl font-bold">
@@ -48,10 +51,32 @@ const Navbar = () => {
           </a>
         </div>
 
+        {/* Links on larger screens */}
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">{links}</ul>
         </div>
 
+        {/* Hamburger menu for mobile */}
+        <div className="navbar-end lg:hidden bg-white">
+          <HamburgerMenu
+            isOpen={hamburgerOpen}
+            menuClicked={() => setHamburgerOpen(!hamburgerOpen)}
+            width={30}
+            height={20}
+            strokeWidth={2}
+            color="black"
+            animationDuration={0.5}
+          />
+
+          {/* Hamburger menu items */}
+          {hamburgerOpen && (
+            <div className="absolute top-16 right-0 bg-blue-500 text-white shadow-lg rounded-lg w-48">
+              <ul className="flex flex-col p-4">{links}</ul>
+            </div>
+          )}
+        </div>
+
+        {/* User login/logout & dropdown */}
         <div className="navbar-end">
           {loading ? (
             <span className="loading-spinner">Loading...</span>
@@ -72,7 +97,7 @@ const Navbar = () => {
                   <ul className="flex flex-col">
                     <li>
                       <Link
-                        to="/dashboard/profile"
+                        to="/dashboard"
                         className="block px-4 py-2 hover:bg-gray-100"
                       >
                         Dashboard

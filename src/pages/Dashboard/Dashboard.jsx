@@ -1,5 +1,5 @@
-import React from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import {
   FaHome,
   FaUserAlt,
@@ -11,8 +11,30 @@ import {
   FaRegHandshake,
   FaGift,
 } from "react-icons/fa"; // Importing React Icons
+import useAxiosPublic from "../../hooks/useAxiosPublic";
+import useAuth from "../../hooks/useAuth";
 
 const Dashboard = () => {
+  const axiosPublic = useAxiosPublic();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [userFromCollection, setUserFromCollection] = useState([]);
+  useEffect(() => {
+    axiosPublic.get(`/all-users/${user.email}`).then((res) => {
+      setUserFromCollection(res.data);
+    });
+  }, []);
+  console.log(userFromCollection);
+  useEffect(() => {
+    if (
+      userFromCollection?.Role === "member" ||
+      userFromCollection?.Role === "User"
+    ) {
+      navigate("/dashboard/profile");
+    } else if (userFromCollection?.Role === "admin") {
+      navigate("/dashboard/admin-profile");
+    }
+  }, [userFromCollection, navigate]);
   return (
     <div className="flex flex-col lg:flex-row max-w-screen-xl mx-auto min-h-screen bg-gray-50">
       {/* Sidebar */}
@@ -34,108 +56,25 @@ const Dashboard = () => {
                 <FaHome /> Home
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to="profile"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
-                }
-              >
-                <FaUserAlt /> My Profile
-              </NavLink>
-            </li>
+            {/* user route */}
+            {(userFromCollection?.Role === "member" ||
+              userFromCollection?.Role === "User") && (
+              <>
+                <li>
+                  <NavLink
+                    to="profile"
+                    className={({ isActive }) =>
+                      isActive
+                        ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                        : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
+                    }
+                  >
+                    <FaUserAlt /> My Profile
+                  </NavLink>
+                </li>
+              </>
+            )}
 
-            {/* member route */}
-            <li>
-              <NavLink
-                to="make-payment"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
-                }
-              >
-                <FaCreditCard /> Make Payment
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="payment-history"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
-                }
-              >
-                <FaHistory /> Payment History
-              </NavLink>
-            </li>
-
-            {/* admin route */}
-            <li>
-              <NavLink
-                to="admin-profile"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
-                }
-              >
-                <FaUserShield /> Admin Profile
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="manage-members"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
-                }
-              >
-                <FaUsersCog /> Manage Members
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="make-announcement"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
-                }
-              >
-                <FaBullhorn /> Make Announcement
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="agreement-requests"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
-                }
-              >
-                <FaRegHandshake /> Agreement Requests
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="manage-coupons"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
-                }
-              >
-                <FaGift /> Manage Coupons
-              </NavLink>
-            </li>
-
-            {/* end of admin route */}
             <li>
               <NavLink
                 to="announcement"
@@ -148,6 +87,103 @@ const Dashboard = () => {
                 <FaBullhorn /> Announcements
               </NavLink>
             </li>
+
+            {/* member route */}
+            {userFromCollection?.Role === "member" && (
+              <>
+                <li>
+                  <NavLink
+                    to="make-payment"
+                    className={({ isActive }) =>
+                      isActive
+                        ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                        : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
+                    }
+                  >
+                    <FaCreditCard /> Make Payment
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="payment-history"
+                    className={({ isActive }) =>
+                      isActive
+                        ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                        : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
+                    }
+                  >
+                    <FaHistory /> Payment History
+                  </NavLink>
+                </li>
+              </>
+            )}
+            {/* admin route */}
+            {userFromCollection?.Role === "admin" && (
+              <>
+                <li>
+                  <NavLink
+                    to="admin-profile"
+                    className={({ isActive }) =>
+                      isActive
+                        ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                        : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
+                    }
+                  >
+                    <FaUserShield /> Admin Profile
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="manage-members"
+                    className={({ isActive }) =>
+                      isActive
+                        ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                        : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
+                    }
+                  >
+                    <FaUsersCog /> Manage Members
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="make-announcement"
+                    className={({ isActive }) =>
+                      isActive
+                        ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                        : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
+                    }
+                  >
+                    <FaBullhorn /> Make Announcement
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="agreement-requests"
+                    className={({ isActive }) =>
+                      isActive
+                        ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                        : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
+                    }
+                  >
+                    <FaRegHandshake /> Agreement Requests
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="manage-coupons"
+                    className={({ isActive }) =>
+                      isActive
+                        ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                        : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
+                    }
+                  >
+                    <FaGift /> Manage Coupons
+                  </NavLink>
+                </li>
+              </>
+            )}
+
+            {/* end of admin route */}
           </ul>
         </nav>
       </aside>

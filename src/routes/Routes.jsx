@@ -5,6 +5,7 @@ import Login from "../authentication/Login";
 import Home from "../pages/Home/Home";
 import Apartment from "../pages/Apartment/Apartment";
 import { DashboardRoute } from "./DashboardRoute";
+import ErrorPage from "../components/ErrorPage";
 
 export const router = createBrowserRouter([
   {
@@ -31,4 +32,8 @@ export const router = createBrowserRouter([
   },
 
   ...DashboardRoute,
+  {
+    path: "*",
+    element: <ErrorPage></ErrorPage>,
+  },
 ]);
