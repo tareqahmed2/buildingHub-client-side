@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
+import Swal from "sweetalert2";
 
 const CouponSection = () => {
   const [coupons, setCoupons] = useState([]);
   const axiosPublic = useAxiosPublic();
+
   useEffect(() => {
     const fetchCoupons = async () => {
       try {
@@ -16,6 +18,28 @@ const CouponSection = () => {
 
     fetchCoupons();
   }, []);
+
+  const handleApplyCoupon = (couponCode) => {
+    navigator.clipboard
+      .writeText(couponCode)
+      .then(() => {
+        Swal.fire({
+          title: "Coupon Applied!",
+          text: `Coupon code ${couponCode} has been copied to your clipboard.`,
+          icon: "success",
+          confirmButtonText: "Close",
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          title: "Oops!",
+          text: "Failed to copy the coupon code. Please try again.",
+          icon: "error",
+          confirmButtonText: "Close",
+        });
+      });
+  };
+
   return (
     <section className="py-16 px-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 max-w-screen-xl mx-auto rounded-lg">
       <div className=" text-center">
@@ -51,7 +75,10 @@ const CouponSection = () => {
               </div>
 
               <div className="p-4 bg-gradient-to-l from-pink-400 to-indigo-300 text-center rounded-b-lg">
-                <button className="bg-indigo-600 text-white py-2 px-4 rounded-lg transform hover:scale-105 transition-all duration-200">
+                <button
+                  className="bg-indigo-600 text-white py-2 px-4 rounded-lg transform hover:scale-105 transition-all duration-200"
+                  onClick={() => handleApplyCoupon(coupon.code)}
+                >
                   Apply Coupon
                 </button>
               </div>
