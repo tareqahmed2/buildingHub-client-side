@@ -4,21 +4,21 @@ import React from "react";
 const buildingDetails = [
   {
     id: 1,
-    image: "https://via.placeholder.com/400x300?text=Building+Exterior",
+    image: "https://i.ibb.co.com/SVrWHr5/about1.jpg",
     title: "Modern Design",
     description:
       "Our building is designed with contemporary architecture that blends form and function seamlessly. From sleek, open layouts to energy-efficient features, every element is crafted for modern living.",
   },
   {
     id: 2,
-    image: "https://via.placeholder.com/400x300?text=Building+Interior",
+    image: "https://i.ibb.co.com/9sygxQm/about2.jpg",
     title: "Spacious Interiors",
     description:
       "Inside our apartments, you’ll find spacious layouts with large windows, offering plenty of natural light. Each apartment is equipped with modern fixtures and finishes for a comfortable living experience.",
   },
   {
     id: 3,
-    image: "https://via.placeholder.com/400x300?text=Building+Facilities",
+    image: "https://i.ibb.co.com/8mHMCk1/about3.webp",
     title: "Top-Notch Facilities",
     description:
       "Our building comes equipped with premium amenities including a fully equipped gym, rooftop terrace, 24/7 security, and dedicated parking spaces to provide you with an elevated living experience.",

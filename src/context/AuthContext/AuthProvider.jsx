@@ -10,6 +10,8 @@ import {
 } from "firebase/auth";
 import { app } from "../../firebase/firebase.init";
 import { FaSpinner } from "react-icons/fa";
+import Swal from "sweetalert2";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 export const AuthContext = createContext();
 
@@ -17,8 +19,47 @@ const AuthProvider = ({ children }) => {
   const auth = getAuth(app);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const axiosPublic = useAxiosPublic();
   const googleProvider = new GoogleAuthProvider();
+  // Function to send user data to the backend
+
+  const storeUserInformation = async (uid, email, displayName, photoURL) => {
+    try {
+      const response = await axiosPublic.post("/all-users", {
+        uid,
+        email,
+        displayName,
+        photoURL,
+        Role: "User",
+      });
+
+      // Check if the user data was successfully inserted
+      if (response.data.insertedId) {
+        // Swal.fire({
+        //   title: "Success!",
+        //   text: "User information has been stored successfully.",
+        //   icon: "success",
+        //   confirmButtonText: "OK",
+        // });
+      } else {
+        // Display failure message if insertedId is not returned
+        // Swal.fire({
+        //   title: "Error!",
+        //   text: response.data.message || "Failed to store user information.",
+        //   icon: "error",
+        //   confirmButtonText: "OK",
+        // });
+      }
+    } catch (error) {
+      console.error("Error storing user information:", error);
+      // Swal.fire({
+      //   title: "Error!",
+      //   text: "Something went wrong while storing user information.",
+      //   icon: "error",
+      //   confirmButtonText: "OK",
+      // });
+    }
+  };
 
   const signUpWithEmailPassword = async (name, email, password, photo) => {
     try {
@@ -91,7 +132,7 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
       if (currentUser) {
         setUser({
@@ -100,6 +141,12 @@ const AuthProvider = ({ children }) => {
           displayName: currentUser.displayName,
           photoURL: currentUser.photoURL || "/default-profile.png",
         });
+        await storeUserInformation(
+          currentUser?.uid,
+          currentUser?.email,
+          currentUser?.displayName,
+          currentUser?.photoURL
+        );
       } else {
         setUser(null);
       }

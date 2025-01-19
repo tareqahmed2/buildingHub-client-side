@@ -7,7 +7,8 @@ import Swal from "sweetalert2";
 const AgreementRequest = () => {
   const { setLoading } = useAuth();
   const axiosPublic = useAxiosPublic();
-
+  const { user } = useAuth();
+  const userEmail = user.email;
   const {
     data: agreementRequest = [],
     error,
@@ -36,7 +37,7 @@ const AgreementRequest = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axiosPublic
-          .put(`/agreements/${id}/accept`)
+          .put(`/agreements/${id}/accept`, { userEmail, id })
           .then((res) => {
             const updatedAgreement = res.data;
             if (updatedAgreement && updatedAgreement.modifiedCount > 0) {

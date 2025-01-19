@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FaTrash } from "react-icons/fa";
+import { FaSpinner, FaTrash } from "react-icons/fa";
 import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 
@@ -71,12 +71,13 @@ const ManageMembers = () => {
     });
   };
 
-  if (isLoading)
+  if (isLoading) {
     return (
-      <div className="flex justify-center items-center">
-        <div className="daisyui-spinner"></div>
+      <div className="flex justify-center items-center h-screen">
+        <FaSpinner className="animate-spin text-3xl text-blue-500" />
       </div>
     );
+  }
 
   return (
     <div className="overflow-x-auto py-4 px-1 md:px-6">

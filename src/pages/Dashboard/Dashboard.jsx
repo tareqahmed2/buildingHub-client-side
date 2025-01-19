@@ -1,5 +1,16 @@
 import React from "react";
 import { Outlet, NavLink } from "react-router-dom";
+import {
+  FaHome,
+  FaUserAlt,
+  FaCreditCard,
+  FaHistory,
+  FaUserShield,
+  FaUsersCog,
+  FaBullhorn,
+  FaRegHandshake,
+  FaGift,
+} from "react-icons/fa"; // Importing React Icons
 
 const Dashboard = () => {
   return (
@@ -16,11 +27,11 @@ const Dashboard = () => {
                 to="/"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
                 }
               >
-                Home
+                <FaHome /> Home
               </NavLink>
             </li>
             <li>
@@ -28,11 +39,11 @@ const Dashboard = () => {
                 to="profile"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
                 }
               >
-                My Profile
+                <FaUserAlt /> My Profile
               </NavLink>
             </li>
 
@@ -42,11 +53,11 @@ const Dashboard = () => {
                 to="make-payment"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
                 }
               >
-                Make Payment
+                <FaCreditCard /> Make Payment
               </NavLink>
             </li>
             <li>
@@ -54,24 +65,25 @@ const Dashboard = () => {
                 to="payment-history"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
                 }
               >
-                Payment History
+                <FaHistory /> Payment History
               </NavLink>
             </li>
+
             {/* admin route */}
             <li>
               <NavLink
                 to="admin-profile"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
                 }
               >
-                Admin Profile
+                <FaUserShield /> Admin Profile
               </NavLink>
             </li>
             <li>
@@ -79,11 +91,11 @@ const Dashboard = () => {
                 to="manage-members"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
                 }
               >
-                Manage Members
+                <FaUsersCog /> Manage Members
               </NavLink>
             </li>
             <li>
@@ -91,11 +103,11 @@ const Dashboard = () => {
                 to="make-announcement"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
                 }
               >
-                Make Announcement
+                <FaBullhorn /> Make Announcement
               </NavLink>
             </li>
             <li>
@@ -103,11 +115,11 @@ const Dashboard = () => {
                 to="agreement-requests"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
                 }
               >
-                Agreement Requests
+                <FaRegHandshake /> Agreement Requests
               </NavLink>
             </li>
             <li>
@@ -115,11 +127,11 @@ const Dashboard = () => {
                 to="manage-coupons"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
                 }
               >
-                Manage Coupons
+                <FaGift /> Manage Coupons
               </NavLink>
             </li>
 
@@ -129,11 +141,11 @@ const Dashboard = () => {
                 to="announcement"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow"
-                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block"
+                    ? "text-white bg-blue-800 py-2 px-4 rounded-lg block font-semibold shadow flex items-center gap-3 whitespace-nowrap"
+                    : "text-blue-200 hover:text-white hover:bg-blue-700 py-2 px-4 rounded-lg block flex items-center gap-3 whitespace-nowrap"
                 }
               >
-                Announcements
+                <FaBullhorn /> Announcements
               </NavLink>
             </li>
           </ul>

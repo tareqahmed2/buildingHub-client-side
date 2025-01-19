@@ -1,32 +1,21 @@
-import React from "react";
-
-// Fake data for coupons
-const coupons = [
-  {
-    id: 1,
-    code: "DISCOUNT10",
-    description: "10% off on your next rent payment.",
-    expiryDate: "2025-02-28",
-    discountPercentage: 10,
-  },
-  {
-    id: 2,
-    code: "SUMMER20",
-    description: "20% off for summer season, valid for all apartments.",
-    expiryDate: "2025-06-15",
-    discountPercentage: 20,
-  },
-  {
-    id: 3,
-    code: "WELCOME5",
-    description:
-      "5% off for new users, apply this coupon during first payment.",
-    expiryDate: "2025-03-01",
-    discountPercentage: 5,
-  },
-];
+import React, { useEffect, useState } from "react";
+import useAxiosPublic from "../../../hooks/useAxiosPublic";
 
 const CouponSection = () => {
+  const [coupons, setCoupons] = useState([]);
+  const axiosPublic = useAxiosPublic();
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      try {
+        const response = await axiosPublic.get("/coupons");
+        setCoupons(response.data);
+      } catch (error) {
+        console.error("Error fetching coupons:", error);
+      }
+    };
+
+    fetchCoupons();
+  }, []);
   return (
     <section className="py-16 px-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 max-w-screen-xl mx-auto rounded-lg">
       <div className=" text-center">

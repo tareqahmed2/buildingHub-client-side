@@ -1,46 +1,41 @@
 import React, { useState, useEffect } from "react";
-
-// Fake data to simulate announcements
-const fakeAnnouncements = [
-  {
-    title: "Building Maintenance",
-    description:
-      "We will be performing maintenance in the building on the 5th of February. Please plan accordingly.",
-    createdAt: "2025-01-16T10:00:00Z",
-  },
-  {
-    title: "New Parking Rules",
-    description:
-      "New parking rules will be enforced starting next month. Please check your parking spot assignments.",
-    createdAt: "2025-01-12T14:30:00Z",
-  },
-  {
-    title: "Fire Drill",
-    description:
-      "A fire drill will take place on the 20th of January. Please ensure you are familiar with evacuation routes.",
-    createdAt: "2025-01-10T09:00:00Z",
-  },
-];
-//todo:fetch real data
+import useAxiosPublic from "../../../hooks/useAxiosPublic";
+import { FaSpinner } from "react-icons/fa";
 
 const Announcements = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setAnnouncements(fakeAnnouncements);
-      setLoading(false);
-    }, 1000);
-  }, []);
+  const axiosPublic = useAxiosPublic();
 
-  if (loading) return <div>Loading...</div>;
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const response = await axiosPublic.get("/announcements");
+        setAnnouncements(response.data);
+      } catch (err) {
+        setError("Failed to fetch announcements");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnnouncements();
+  }, [axiosPublic]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <FaSpinner className="animate-spin text-3xl text-blue-500" />
+      </div>
+    );
+  }
   if (error) return <div>{error}</div>;
 
   return (
     <div className="announcements-page">
-      <h2 className="text-2xl font-bold mb-4">Announcements</h2>
+      <h2 className="text-2xl font-bold mb-4 text-purple-500">Announcements</h2>
       <div className="announcements-list">
         {announcements.map((announcement, index) => (
           <div

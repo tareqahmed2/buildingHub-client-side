@@ -1,8 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
+import useAxiosPublic from "../../../hooks/useAxiosPublic";
 
 const Profile = () => {
   const { user } = useAuth();
+  const [agreements, setAgreements] = useState([]);
+  const axiosPublic = useAxiosPublic();
+
+  useEffect(() => {
+    if (user?.email) {
+      axiosPublic.get(`/agreements/${user.email}`).then((res) => {
+        setAgreements(res.data);
+      });
+    }
+  }, [user?.email]);
+
+  // Destructuring agreement data
+  const agreement = agreements[0] || {};
 
   return (
     <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen">
@@ -10,7 +24,6 @@ const Profile = () => {
         My Profile
       </h1>
       <div className="bg-white p-8 rounded-lg shadow-xl max-w-lg mx-auto">
-        {/* Profile Image and Details */}
         <div className="flex flex-col items-center mb-8">
           <div className="relative w-32 h-32 md:w-40 md:h-40">
             <img
@@ -32,14 +45,13 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Agreement Information */}
         <div className="space-y-6">
           <div>
             <h3 className="text-lg font-bold text-gray-700">
               Agreement Accept Date:
             </h3>
             <p className="text-gray-600 text-sm bg-blue-50 px-4 py-2 rounded-lg shadow">
-              None
+              {agreement.dateApplied || "None"}
             </p>
           </div>
           <div>
@@ -47,9 +59,15 @@ const Profile = () => {
               Rented Apartment Info:
             </h3>
             <div className="bg-blue-50 px-4 py-3 rounded-lg shadow space-y-2">
-              <p className="text-sm text-gray-600">Floor: None</p>
-              <p className="text-sm text-gray-600">Block: None</p>
-              <p className="text-sm text-gray-600">Room No: None</p>
+              <p className="text-sm text-gray-600">
+                Floor: {agreement.floor || "None"}
+              </p>
+              <p className="text-sm text-gray-600">
+                Block: {agreement.block || "None"}
+              </p>
+              <p className="text-sm text-gray-600">
+                Room No: {agreement.aptNo || "None"}
+              </p>
             </div>
           </div>
         </div>
