@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
   FaHome,
   FaUserAlt,
@@ -18,6 +18,7 @@ const Dashboard = () => {
   const axiosPublic = useAxiosPublic();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [userFromCollection, setUserFromCollection] = useState([]);
   useEffect(() => {
     axiosPublic.get(`/all-users/${user.email}`).then((res) => {
@@ -26,15 +27,17 @@ const Dashboard = () => {
   }, []);
   console.log(userFromCollection);
   useEffect(() => {
-    if (
-      userFromCollection?.Role === "member" ||
-      userFromCollection?.Role === "User"
-    ) {
-      navigate("/dashboard/profile");
-    } else if (userFromCollection?.Role === "admin") {
-      navigate("/dashboard/admin-profile");
+    if (location.pathname === "/dashboard") {
+      if (
+        userFromCollection?.Role === "member" ||
+        userFromCollection?.Role === "User"
+      ) {
+        navigate("/dashboard/profile");
+      } else if (userFromCollection?.Role === "admin") {
+        navigate("/dashboard/admin-profile");
+      }
     }
-  }, [userFromCollection, navigate]);
+  }, [userFromCollection, navigate, location.pathname]);
   return (
     <div className="flex flex-col lg:flex-row max-w-screen-xl mx-auto min-h-screen bg-gray-50">
       {/* Sidebar */}

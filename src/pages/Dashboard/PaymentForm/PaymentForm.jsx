@@ -12,11 +12,10 @@ const PaymentForm = () => {
   const [coupon, setCoupon] = useState("");
   const [message, setMessage] = useState("");
   const [month, setMonth] = useState("");
-  const [appliedRent, setAppliedRent] = useState(null); // Initialize to null for clarity
-  const [validCoupons] = useState({
-    SAVE10: 10, // 10% discount
-    SAVE20: 20, // 20% discount
-  });
+  const [appliedRent, setAppliedRent] = useState(null);
+  const [showError, setShowError] = useState(true);
+  const [couponError, setCouponError] = useState(true);
+  const [isCouponUsedModalOpen, setIsCouponUsedModalOpen] = useState(false); // Modal state
 
   const axiosPublic = useAxiosPublic();
 
@@ -27,7 +26,7 @@ const PaymentForm = () => {
         const response = await axiosPublic.get(`/agreements?email=${email}`);
         if (response.data && response.data.length > 0) {
           setAgreement(response.data);
-          setAppliedRent(response.data[0].rent); // Set rent from the first agreement
+          setAppliedRent(response.data[0].rent);
         } else {
           console.log("No agreement found for this user.");
         }
@@ -42,45 +41,54 @@ const PaymentForm = () => {
   }, [email]);
 
   // Handle coupon application
-  const applyCoupon = () => {
-    if (!coupon || coupon.trim() === "") {
-      toast.warn("Please enter a valid coupon code.");
+  const applyCoupon = async () => {
+    if (!month) {
+      toast.error("Please select a month first.");
       return;
     }
 
-    axiosPublic
-      .get(`/coupons/${coupon}`)
-      .then((res) => {
-        console.log(res.data);
-        if (res.data && res.data.length > 0) {
-          const discountPercentage = res.data[0].discountPercentage;
-          const discountedRent =
-            agreement[0].rent - (agreement[0].rent * discountPercentage) / 100;
-          setAppliedRent(discountedRent);
-          setMessage(
-            `Coupon applied! ${discountPercentage}% discount applied.`
-          );
-        } else {
-          setAppliedRent(agreement[0].rent); // No discount, so reset to original rent
-          setMessage("Invalid coupon code.");
+    try {
+      const response = await axiosPublic.get(`/coupons/${coupon}`);
+      if (response.data && response.data.length > 0) {
+        const discountPercentage = response.data[0].discountPercentage;
+
+        // Check if coupon is already used
+        if (agreement[0].couponUsed === coupon) {
+          setIsCouponUsedModalOpen(true); // Show modal if coupon is already used
+          return;
         }
-      })
-      .catch((error) => {
-        console.log("Error applying coupon.", error);
-        setMessage("Error applying coupon. Please try again.");
-      });
+
+        const discountedRent =
+          agreement[0].rent - (agreement[0].rent * discountPercentage) / 100;
+
+        // Update the database with the new rent and couponUsed property
+        await axiosPublic.patch(`/agreements/${agreement[0]._id}`, {
+          rent: discountedRent,
+          couponUsed: coupon,
+        });
+
+        setAppliedRent(discountedRent);
+        setMessage(
+          `Coupon applied! ${discountPercentage}% discount applied. Rent updated successfully.`
+        );
+        toast.success(
+          `Coupon applied! ${discountPercentage}% discount applied!`
+        );
+      } else {
+        setAppliedRent(agreement[0].rent);
+        setMessage("Invalid coupon code.");
+        toast.error("Invalid coupon code.");
+      }
+    } catch (error) {
+      console.error("Error applying coupon or updating rent:", error);
+      setMessage("Error applying coupon. Please try again.");
+      toast.error("Error applying coupon. Please try again.");
+    }
   };
 
-  // Handle the payment logic
-  const handlePayment = () => {
-    if (!month) {
-      toast.warn("Please select a month to proceed.");
-      setAppliedRent(agreement[0].rent); // Reset to original rent if no month is selected
-      return; // Stop further execution if no month is selected
-    }
-
-    // Proceed to payment page
-    navigate("/payment");
+  // Close the coupon-used modal
+  const closeCouponUsedModal = () => {
+    setIsCouponUsedModalOpen(false);
   };
 
   return (
@@ -145,30 +153,61 @@ const PaymentForm = () => {
           <label className="block text-gray-700">Month</label>
           <select
             required
-            onChange={(e) => setMonth(e.target.value)}
+            onChange={(e) => {
+              setMonth(e.target.value);
+              setShowError(!e.target.value);
+            }}
             className="w-full p-2 border rounded"
           >
             <option value="">Select Month</option>
             <option value="January">January</option>
             <option value="February">February</option>
             <option value="March">March</option>
-            {/* Add more months as needed */}
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June">June</option>
+            <option value="July">July</option>
+            <option value="August">August</option>
+            <option value="September">September</option>
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
           </select>
         </div>
 
         {/* Coupon Code */}
         <div className="mb-4">
+          {showError && (
+            <span className="block mb-2 text-red-500">
+              Please select a month to apply a coupon.
+            </span>
+          )}
+          {!showError && couponError && (
+            <span className="block mb-2 text-red-500">
+              Please Apply a coupon code.
+            </span>
+          )}
+
           <label className="block text-gray-700">Coupon Code</label>
           <input
             type="text"
             value={coupon}
-            onChange={(e) => setCoupon(e.target.value)}
+            onChange={(e) => {
+              setCoupon(e.target.value);
+              setCouponError(!e.target.value);
+            }}
+            disabled={!month}
             className="w-full p-2 border rounded"
           />
           <button
             type="button"
             onClick={applyCoupon}
-            className="mt-2 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            disabled={!month || coupon.trim() === ""}
+            className={`mt-2 w-full p-2 rounded ${
+              month && coupon.trim()
+                ? "bg-blue-500 text-white hover:bg-blue-600"
+                : "bg-gray-400 text-gray-200 cursor-not-allowed"
+            }`}
           >
             Apply Coupon
           </button>
@@ -180,12 +219,36 @@ const PaymentForm = () => {
         {/* Pay Button */}
         <button
           type="button"
-          onClick={handlePayment}
+          onClick={() => {
+            if (!month) {
+              toast.warn("Please select a month to proceed.");
+              return;
+            }
+            navigate("/dashboard/payment");
+          }}
           className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
         >
           Pay Now
         </button>
       </form>
+
+      {/* Coupon Used Modal */}
+      {isCouponUsedModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-md">
+            <h3 className="text-lg font-bold mb-4">Coupon Already Used</h3>
+            <p className="text-gray-700 mb-4">
+              This coupon has already been used. Please try a different coupon.
+            </p>
+            <button
+              onClick={closeCouponUsedModal}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -10,6 +10,7 @@ import ManageMembers from "../pages/Dashboard/AdminRoute/ManageMembers/ManageMem
 import MakeAnnouncement from "../pages/Dashboard/AdminRoute/MakeAnnouncement/MakeAnnouncement";
 import AgreementRequest from "../pages/Dashboard/AdminRoute/AgreementRequest/AgreementRequest";
 import ManageCoupons from "../pages/Dashboard/AdminRoute/ManageCoupons/ManageCoupons";
+import Payment from "../pages/Dashboard/Payment/Payment";
 
 const Dashboard = lazy(() => import("../pages/Dashboard/Dashboard"));
 
@@ -58,6 +59,10 @@ export const DashboardRoute = [
       {
         path: "manage-coupons",
         element: <ManageCoupons />,
+      },
+      {
+        path: "payment",
+        element: <Payment></Payment>,
       },
     ],
   },
