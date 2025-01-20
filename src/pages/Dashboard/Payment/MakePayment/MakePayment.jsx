@@ -1,44 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../../../../hooks/useAuth";
+import useAxiosPublic from "../../../../hooks/useAxiosPublic";
+import { toast } from "react-toastify";
 
 const MakePayment = () => {
   const navigate = useNavigate();
-  // Dummy data for demonstration
-  const memberDetails = {
-    email: "member@example.com",
-    floor: "5th Floor",
-    block: "B Block",
-    apartmentNo: "12A",
-    rent: 5000,
-  };
-
+  const [agreements, setAgreements] = useState([]);
+  const { user } = useAuth();
+  const email = user.email;
+  const axiosPublic = useAxiosPublic();
   const [month, setMonth] = useState("");
-  const [coupon, setCoupon] = useState("");
-  const [discountedRent, setDiscountedRent] = useState(memberDetails.rent);
+  const [discountedRent, setDiscountedRent] = useState(0);
 
-  // Dummy coupon for validation
-  const validCoupons = {
-    SAVE20: 20, // 20% discount
-    SAVE10: 10, // 10% discount
-  };
+  // Fetch agreements for the logged-in user
+  useEffect(() => {
+    const fetchAgreements = async () => {
+      try {
+        const response = await axiosPublic.get(`/agreements?email=${email}`);
+        setAgreements(response.data);
+      } catch (error) {
+        console.error("Error fetching agreements:", error);
+      }
+    };
 
-  const handleCouponApply = () => {
-    if (validCoupons[coupon]) {
-      const discount = (memberDetails.rent * validCoupons[coupon]) / 100;
-      setDiscountedRent(memberDetails.rent - discount);
-      alert(`Coupon applied! You saved ${validCoupons[coupon]}%.`);
-    } else {
-      alert("Invalid coupon code.");
-    }
-  };
+    fetchAgreements();
+  }, [email]);
 
+  // Handle payment logic
   const handlePayment = () => {
-    if (!month) {
-      alert("Please select a month to proceed.");
-      return;
-    }
-    alert(`Redirecting to payment for ${month} with rent: $${discountedRent}.`);
-    // Redirect logic goes here (e.g., payment gateway integration)
+    navigate("payment-form");
   };
 
   return (
@@ -46,57 +37,62 @@ const MakePayment = () => {
       <h2 className="text-xl font-bold mb-4">Make Payment</h2>
       <form>
         {/* Member details */}
-        <div className="mb-4">
-          <label className="block text-gray-700">Member Email</label>
-          <input
-            type="email"
-            readOnly
-            value={memberDetails.email}
-            className="w-full p-2 border rounded bg-gray-100"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Floor</label>
-          <input
-            type="text"
-            readOnly
-            value={memberDetails.floor}
-            className="w-full p-2 border rounded bg-gray-100"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Block Name</label>
-          <input
-            type="text"
-            readOnly
-            value={memberDetails.block}
-            className="w-full p-2 border rounded bg-gray-100"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Apartment No/Room No</label>
-          <input
-            type="text"
-            readOnly
-            value={memberDetails.apartmentNo}
-            className="w-full p-2 border rounded bg-gray-100"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Rent</label>
-          <input
-            type="text"
-            readOnly
-            value={`$${discountedRent}`}
-            className="w-full p-2 border rounded bg-gray-100"
-          />
-        </div>
+        {agreements.map((agreement, index) => (
+          <div key={index}>
+            <div className="mb-4">
+              <label className="block text-gray-700">Member Email</label>
+              <input
+                type="email"
+                readOnly
+                value={agreement.userEmail}
+                className="w-full p-2 border rounded bg-gray-100"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Floor</label>
+              <input
+                type="text"
+                readOnly
+                value={agreement.floor}
+                className="w-full p-2 border rounded bg-gray-100"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Block Name</label>
+              <input
+                type="text"
+                readOnly
+                value={agreement.block}
+                className="w-full p-2 border rounded bg-gray-100"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">
+                Apartment No/Room No
+              </label>
+              <input
+                type="text"
+                readOnly
+                value={agreement.aptNo}
+                className="w-full p-2 border rounded bg-gray-100"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Rent</label>
+              <input
+                type="text"
+                readOnly
+                value={agreement.rent}
+                className="w-full p-2 border rounded bg-gray-100"
+              />
+            </div>
+          </div>
+        ))}
 
         {/* Month Selection */}
         <div className="mb-4">
           <label className="block text-gray-700">Month</label>
           <select
-            value={month}
             onChange={(e) => setMonth(e.target.value)}
             className="w-full p-2 border rounded"
           >
@@ -111,7 +107,7 @@ const MakePayment = () => {
         {/* Payment Button */}
         <button
           type="button"
-          onClick={() => navigate("payment-form")}
+          onClick={handlePayment}
           className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
         >
           Pay Now
