@@ -90,19 +90,6 @@ const MakePayment = () => {
         ))}
 
         {/* Month Selection */}
-        <div className="mb-4">
-          <label className="block text-gray-700">Month</label>
-          <select
-            onChange={(e) => setMonth(e.target.value)}
-            className="w-full p-2 border rounded"
-          >
-            <option value="">Select Month</option>
-            <option value="January">January</option>
-            <option value="February">February</option>
-            <option value="March">March</option>
-            {/* Add more months as needed */}
-          </select>
-        </div>
 
         {/* Payment Button */}
         <button

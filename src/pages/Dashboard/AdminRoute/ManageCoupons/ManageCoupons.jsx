@@ -135,7 +135,9 @@ const ManageCoupons = () => {
                 >
                   <td className="p-4 text-gray-800">{coupon?.code}</td>
                   <td className="p-4 text-gray-800">{coupon?.description}</td>
-                  <td className="p-4 text-gray-800">{coupon?.expiryDate}</td>
+                  <td className="p-4 text-gray-800 whitespace-nowrap">
+                    {coupon?.expiryDate}
+                  </td>
                   <td className="p-4 text-gray-800">
                     {coupon?.discountPercentage}%
                   </td>

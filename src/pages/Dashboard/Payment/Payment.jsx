@@ -6,11 +6,29 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import axios from "axios";
+
+import useAuth from "../../../hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
 const axiosPublic = useAxiosPublic();
+
+const fetchAgreement = async (email) => {
+  const response = await axiosPublic.get(`/agreements?email=${email}`);
+  if (response.data && response.data.length > 0) {
+    return response.data[0];
+  }
+  throw new Error("Agreement not found");
+};
+
+const fetchCoupon = async (coupon) => {
+  const response = await axiosPublic.get(`/coupons/${coupon}`);
+  if (response.data && response.data.length > 0) {
+    return response.data[0];
+  }
+  return null;
+};
 
 const PaymentForm = () => {
   const stripe = useStripe();
@@ -18,41 +36,44 @@ const PaymentForm = () => {
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [agreement, setAgreement] = useState([]);
   const [coupon, setCoupon] = useState("");
   const [appliedRent, setAppliedRent] = useState(null);
+  const { user } = useAuth();
+
+  const {
+    data: agreementData,
+    isLoading: isAgreementLoading,
+    error: agreementError,
+    refetch: refetchAgreement,
+  } = useQuery({
+    queryKey: ["agreement", user.email],
+    queryFn: () => fetchAgreement(user.email),
+    enabled: !!user.email,
+  });
+
+  const {
+    data: couponData,
+    isLoading: isCouponLoading,
+    error: couponError,
+  } = useQuery({
+    queryKey: ["coupon", coupon],
+    queryFn: () => fetchCoupon(coupon),
+    enabled: !!coupon,
+  });
 
   useEffect(() => {
-    const fetchAgreement = async () => {
-      try {
-        const email = "user-email@example.com";
-        const response = await axiosPublic.get(`/agreements?email=${email}`);
-        if (response.data && response.data.length > 0) {
-          const agreementData = response.data[0];
-          setAgreement([agreementData]);
+    if (agreementData) {
+      let rentAmount = agreementData.rent;
 
-          let rentAmount = agreementData.rent;
-
-          if (coupon) {
-            const couponResponse = await axiosPublic.get(`/coupons/${coupon}`);
-            if (couponResponse.data && couponResponse.data.length > 0) {
-              const discountPercentage =
-                couponResponse.data[0].discountPercentage;
-              rentAmount -= (agreementData.rent * discountPercentage) / 100;
-            }
-          }
-
-          setAppliedRent(rentAmount);
-          setAmount(rentAmount);
-        }
-      } catch (error) {
-        console.error("Error fetching agreement or coupon:", error);
-        setMessage("Error fetching agreement or coupon.");
+      if (couponData) {
+        const discountPercentage = couponData.discountPercentage;
+        rentAmount -= (agreementData.rent * discountPercentage) / 100;
       }
-    };
 
-    fetchAgreement();
-  }, [coupon]);
+      setAppliedRent(rentAmount);
+      setAmount(rentAmount);
+    }
+  }, [agreementData, couponData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,6 +103,17 @@ const PaymentForm = () => {
         setMessage(`Payment failed: ${result.error.message}`);
       } else if (result.paymentIntent.status === "succeeded") {
         setMessage("Payment successful!");
+        await axiosPublic
+          .patch(`/agreement?email=${user.email}`, {
+            payment: "successful",
+          })
+          .then((res) => {
+            console.log("Payment status updated:", res.data);
+            refetchAgreement();
+          })
+          .catch((error) => {
+            console.error("Error updating payment status:", error);
+          });
       }
     } catch (error) {
       setMessage(`Error: ${error.response?.data?.error || error.message}`);
@@ -92,41 +124,63 @@ const PaymentForm = () => {
 
   return (
     <div className="p-6 max-w-lg mx-auto bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Make a Payment</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-gray-700 mb-2">Amount (USD)</label>
-          <input
-            type="number"
-            min="1"
-            step="any"
-            value={appliedRent ? appliedRent.toFixed(2) : ""}
-            readOnly
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-700 mb-2">Card Details</label>
-          <div className="p-2 border rounded">
-            <CardElement />
+      {agreementData?.paymentStatus === "successful" ? (
+        // Success message with eye-catching design
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-green-600">
+            Payment Successful!
+          </h2>
+          <p className="mt-4 text-lg text-gray-700">
+            You have successfully paid your rent. Thank you for your payment!
+          </p>
+          <div className="mt-6 p-4 bg-green-100 border-2 border-green-500 rounded">
+            <p className="text-center text-green-600 font-semibold">
+              Your bill has been paid.
+            </p>
           </div>
         </div>
+      ) : (
+        // Payment form when not paid yet
+        <>
+          <h2 className="text-xl font-bold mb-4">Make a Payment</h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-gray-700 mb-2">Amount (USD)</label>
+              <input
+                type="number"
+                min="1"
+                step="any"
+                value={appliedRent ? appliedRent.toFixed(2) : ""}
+                readOnly
+                className="w-full p-2 border rounded"
+              />
+            </div>
 
-        <button
-          type="submit"
-          disabled={!stripe || loading}
-          className={`w-full p-2 rounded ${
-            !stripe || loading
-              ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-              : "bg-blue-500 text-white hover:bg-blue-600"
-          }`}
-        >
-          {loading ? "Processing..." : "Pay Now"}
-        </button>
-      </form>
+            <div>
+              <label className="block text-gray-700 mb-2">Card Details</label>
+              <div className="p-2 border rounded">
+                <CardElement />
+              </div>
+            </div>
 
-      {message && <p className="mt-4 text-center text-red-500">{message}</p>}
+            <button
+              type="submit"
+              disabled={!stripe || loading}
+              className={`w-full p-2 rounded ${
+                !stripe || loading
+                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                  : "bg-blue-500 text-white hover:bg-blue-600"
+              }`}
+            >
+              {loading ? "Processing..." : "Pay Now"}
+            </button>
+          </form>
+
+          {message && (
+            <p className="mt-4 text-center text-red-500">{message}</p>
+          )}
+        </>
+      )}
     </div>
   );
 };

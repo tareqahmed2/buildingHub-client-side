@@ -55,16 +55,16 @@ const CouponSection = () => {
           {coupons.map((coupon) => (
             <div
               key={coupon.id}
-              className="bg-white rounded-lg shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-300"
+              className="card bg-white rounded-lg shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-300"
             >
-              <div className="p-6 bg-gradient-to-r from-indigo-400 to-pink-300 text-center">
+              <div className="card-body bg-gradient-to-r from-indigo-400 to-pink-300 text-center">
                 <h3 className="text-2xl font-semibold text-white">
                   {coupon.code}
                 </h3>
                 <p className="text-white text-lg mt-2">{coupon.description}</p>
               </div>
 
-              <div className="bg-white p-4 text-center">
+              <div className="card-body bg-white text-center">
                 <p className="text-sm text-gray-600">
                   <span className="font-semibold">Expires:</span>{" "}
                   {coupon.expiryDate}
@@ -74,7 +74,7 @@ const CouponSection = () => {
                 </p>
               </div>
 
-              <div className="p-4 bg-gradient-to-l from-pink-400 to-indigo-300 text-center rounded-b-lg">
+              <div className="card-footer p-4 bg-gradient-to-l from-pink-400 to-indigo-300 text-center rounded-b-lg">
                 <button
                   className="bg-indigo-600 text-white py-2 px-4 rounded-lg transform hover:scale-105 transition-all duration-200"
                   onClick={() => handleApplyCoupon(coupon.code)}

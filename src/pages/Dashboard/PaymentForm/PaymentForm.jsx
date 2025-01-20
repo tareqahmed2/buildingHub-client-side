@@ -91,6 +91,20 @@ const PaymentForm = () => {
     setIsCouponUsedModalOpen(false);
   };
 
+  // Handle Pay Now button click
+  const handlePayNow = () => {
+    if (!month) {
+      toast.warn("Please select a month to proceed.");
+      return;
+    }
+    if (!coupon.trim()) {
+      toast.warn("Please enter a coupon code to proceed.");
+      return; // Prevent proceeding if coupon is not entered
+    }
+
+    navigate("/dashboard/payment");
+  };
+
   return (
     <div className="p-6 max-w-lg mx-auto bg-white rounded shadow">
       <h2 className="text-xl font-bold mb-4">Make Payment</h2>
@@ -219,13 +233,7 @@ const PaymentForm = () => {
         {/* Pay Button */}
         <button
           type="button"
-          onClick={() => {
-            if (!month) {
-              toast.warn("Please select a month to proceed.");
-              return;
-            }
-            navigate("/dashboard/payment");
-          }}
+          onClick={handlePayNow}
           className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
         >
           Pay Now

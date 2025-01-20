@@ -166,7 +166,7 @@ const AgreementRequest = () => {
                   {request.aptNo}
                 </td>
                 <td className="px-2 py-4 border-b border-r text-gray-600 whitespace-nowrap">
-                  {request.rent} Tk
+                  ${request.rent}
                 </td>
                 <td className="px-2 py-4 border-b border-r text-gray-600 whitespace-nowrap">
                   {request?.dateApplied}
