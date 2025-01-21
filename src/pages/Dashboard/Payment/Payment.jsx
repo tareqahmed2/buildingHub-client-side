@@ -103,6 +103,14 @@ const PaymentForm = () => {
         setMessage(`Payment failed: ${result.error.message}`);
       } else if (result.paymentIntent.status === "succeeded") {
         setMessage("Payment successful!");
+        const paymentDetails = {
+          email: user.email,
+          rent: appliedRent,
+          date: new Date().toISOString(),
+          paymentIntentId: result.paymentIntent.id,
+        };
+
+        await axiosPublic.post("/payment-history", paymentDetails);
         await axiosPublic
           .patch(`/agreement?email=${user.email}`, {
             payment: "successful",
@@ -125,7 +133,6 @@ const PaymentForm = () => {
   return (
     <div className="p-6 max-w-lg mx-auto bg-white rounded shadow">
       {agreementData?.paymentStatus === "successful" ? (
-        // Success message with eye-catching design
         <div className="text-center">
           <h2 className="text-2xl font-bold text-green-600">
             Payment Successful!
@@ -140,7 +147,6 @@ const PaymentForm = () => {
           </div>
         </div>
       ) : (
-        // Payment form when not paid yet
         <>
           <h2 className="text-xl font-bold mb-4">Make a Payment</h2>
           <form onSubmit={handleSubmit} className="space-y-4">

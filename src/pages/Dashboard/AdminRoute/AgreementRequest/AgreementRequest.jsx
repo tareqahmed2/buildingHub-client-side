@@ -8,7 +8,6 @@ const AgreementRequest = () => {
   const { setLoading } = useAuth();
   const axiosPublic = useAxiosPublic();
   const { user } = useAuth();
-  const userEmail = user.email;
   const {
     data: agreementRequest = [],
     error,
@@ -26,7 +25,7 @@ const AgreementRequest = () => {
     },
   });
   // Function to handle the Accept action
-  const handleAccept = (id) => {
+  const handleAccept = (userEmail, id) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You are about to accept this agreement!",
@@ -178,7 +177,9 @@ const AgreementRequest = () => {
                   {request.status === "pending" && (
                     <>
                       <button
-                        onClick={() => handleAccept(request._id)}
+                        onClick={() =>
+                          handleAccept(request.userEmail, request._id)
+                        }
                         title="Accept"
                         className="flex items-center justify-center text-green-600 hover:bg-green-100 p-2 rounded-lg transition duration-300"
                       >

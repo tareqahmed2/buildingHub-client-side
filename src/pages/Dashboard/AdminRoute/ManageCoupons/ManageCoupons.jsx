@@ -1,24 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Swal from "sweetalert2";
-import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 
 const ManageCoupons = () => {
-  const [coupons, setCoupons] = useState([]);
   const axiosPublic = useAxiosPublic();
-  useEffect(() => {
-    const fetchCoupons = async () => {
-      try {
-        const response = await axiosPublic.get("/coupons");
-        setCoupons(response.data);
-      } catch (error) {
-        console.error("Error fetching coupons:", error);
-      }
-    };
-
-    fetchCoupons();
-  }, []);
+  const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
   const [newCoupon, setNewCoupon] = useState({
     code: "",
@@ -36,6 +25,49 @@ const ManageCoupons = () => {
     const year = d.getFullYear();
     return `${day}/${month}/${year}`;
   };
+
+  // Fetch coupons with useQuery
+  const { data: coupons, isLoading } = useQuery({
+    queryKey: ["coupons"],
+    queryFn: async () => {
+      const response = await axiosPublic.get("/coupons");
+      return response.data;
+    },
+  });
+
+  // Mutation for adding a new coupon
+  const addCouponMutation = useMutation({
+    mutationFn: async (newCoupon) => {
+      const response = await axiosPublic.post("/coupons", {
+        ...newCoupon,
+        expiryDate: formatDate(newCoupon.expiryDate),
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["coupons"]);
+      setShowModal(false);
+      setNewCoupon({
+        code: "",
+        description: "",
+        expiryDate: null,
+        discountPercentage: "",
+        allProperties: false,
+      });
+      Swal.fire({
+        icon: "success",
+        title: "Coupon Added!",
+        text: "The coupon has been added successfully.",
+      });
+    },
+    onError: () => {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "There was an error adding the coupon. Please try again.",
+      });
+    },
+  });
 
   // Handle input change
   const handleChange = (e) => {
@@ -55,39 +87,9 @@ const ManageCoupons = () => {
   };
 
   // Handle form submit
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const response = await axiosPublic.post("/coupons", {
-        ...newCoupon,
-        expiryDate: formatDate(newCoupon.expiryDate),
-      });
-
-      if (response.data.insertedId) {
-        setCoupons([...coupons, response.data.coupon]); // Add to table
-        setShowModal(false); // Close modal
-        setNewCoupon({
-          code: "",
-          description: "",
-          expiryDate: null,
-          discountPercentage: "",
-          allProperties: false,
-        });
-
-        // Show success alert
-        Swal.fire({
-          icon: "success",
-          title: "Coupon Added!",
-          text: "The coupon has been added successfully.",
-        });
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "There was an error adding the coupon. Please try again.",
-      });
-    }
+    addCouponMutation.mutate(newCoupon);
   };
 
   return (
@@ -104,60 +106,64 @@ const ManageCoupons = () => {
 
       {/* Coupons Table */}
       <div className="mt-6 overflow-x-auto">
-        <table className="min-w-full bg-white rounded-lg shadow-md">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="text-left p-4 text-gray-700 font-semibold">
-                Coupon Code
-              </th>
-              <th className="text-left p-4 text-gray-700 font-semibold">
-                Description
-              </th>
-              <th className="text-left p-4 text-gray-700 font-semibold">
-                Expiry Date
-              </th>
-              <th className="text-left p-4 text-gray-700 font-semibold">
-                Discount (%)
-              </th>
-              <th className="text-left p-4 text-gray-700 font-semibold">
-                All Properties
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {coupons.length > 0 ? (
-              coupons.map((coupon, index) => (
-                <tr
-                  key={index}
-                  className={`border-b ${
-                    index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                  }`}
-                >
-                  <td className="p-4 text-gray-800">{coupon?.code}</td>
-                  <td className="p-4 text-gray-800">{coupon?.description}</td>
-                  <td className="p-4 text-gray-800 whitespace-nowrap">
-                    {coupon?.expiryDate}
-                  </td>
-                  <td className="p-4 text-gray-800">
-                    {coupon?.discountPercentage}%
-                  </td>
-                  <td className="p-4 text-gray-800">
-                    {coupon?.allProperties ? "Yes" : "No"}
+        {isLoading ? (
+          <p className="text-center text-gray-500">Loading coupons...</p>
+        ) : (
+          <table className="min-w-full bg-white rounded-lg shadow-md">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="text-left p-4 text-gray-700 font-semibold whitespace-nowrap">
+                  Coupon Code
+                </th>
+                <th className="text-left p-4 text-gray-700 font-semibold">
+                  Description
+                </th>
+                <th className="text-left p-4 text-gray-700 font-semibold">
+                  Expiry Date
+                </th>
+                <th className="text-left p-4 text-gray-700 font-semibold">
+                  Discount (%)
+                </th>
+                <th className="text-left p-4 text-gray-700 font-semibold">
+                  All Properties
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {coupons?.length > 0 ? (
+                coupons.map((coupon, index) => (
+                  <tr
+                    key={index}
+                    className={`border-b ${
+                      index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                    }`}
+                  >
+                    <td className="p-4 text-gray-800">{coupon?.code}</td>
+                    <td className="p-4 text-gray-800">{coupon?.description}</td>
+                    <td className="p-4 text-gray-800 whitespace-nowrap">
+                      {coupon?.expiryDate}
+                    </td>
+                    <td className="p-4 text-gray-800">
+                      {coupon?.discountPercentage}%
+                    </td>
+                    <td className="p-4 text-gray-800">
+                      {coupon?.allProperties ? "Yes" : "No"}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="5"
+                    className="p-4 text-center text-gray-500 italic"
+                  >
+                    No coupons added yet.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan="5"
-                  className="p-4 text-center text-gray-500 italic"
-                >
-                  No coupons added yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Add Coupon Modal */}
@@ -177,7 +183,7 @@ const ManageCoupons = () => {
                   type="text"
                   id="code"
                   name="code"
-                  value={newCoupon?.code}
+                  value={newCoupon.code}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg"
                   placeholder="Enter coupon code"
@@ -194,7 +200,7 @@ const ManageCoupons = () => {
                 <textarea
                   id="description"
                   name="description"
-                  value={newCoupon?.description}
+                  value={newCoupon.description}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg"
                   placeholder="Enter coupon description"
@@ -211,7 +217,7 @@ const ManageCoupons = () => {
                 </label>
                 <DatePicker
                   id="expiryDate"
-                  selected={newCoupon?.expiryDate}
+                  selected={newCoupon.expiryDate}
                   onChange={handleDateChange}
                   dateFormat="dd/MM/yyyy"
                   className="w-full p-2 border rounded-lg"
@@ -230,7 +236,7 @@ const ManageCoupons = () => {
                   type="number"
                   id="discountPercentage"
                   name="discountPercentage"
-                  value={newCoupon?.discountPercentage}
+                  value={newCoupon.discountPercentage}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg"
                   placeholder="Enter discount (%)"
@@ -242,7 +248,7 @@ const ManageCoupons = () => {
                   type="checkbox"
                   id="allProperties"
                   name="allProperties"
-                  checked={newCoupon?.allProperties}
+                  checked={newCoupon.allProperties}
                   onChange={handleChange}
                   className="mr-2"
                 />
