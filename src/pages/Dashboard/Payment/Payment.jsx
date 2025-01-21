@@ -112,7 +112,7 @@ const PaymentForm = () => {
 
         await axiosPublic.post("/payment-history", paymentDetails);
         await axiosPublic
-          .patch(`/agreement?email=${user.email}`, {
+          .patch(`/agreement?email=${user?.email}`, {
             payment: "successful",
           })
           .then((res) => {
@@ -132,7 +132,7 @@ const PaymentForm = () => {
 
   return (
     <div className="p-6 max-w-lg mx-auto bg-white rounded shadow">
-      {agreementData?.paymentStatus === "successful" ? (
+      {agreementData?.payment === "successful" ? (
         <div className="text-center">
           <h2 className="text-2xl font-bold text-green-600">
             Payment Successful!

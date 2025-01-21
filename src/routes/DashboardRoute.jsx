@@ -11,6 +11,8 @@ import MakeAnnouncement from "../pages/Dashboard/AdminRoute/MakeAnnouncement/Mak
 import AgreementRequest from "../pages/Dashboard/AdminRoute/AgreementRequest/AgreementRequest";
 import ManageCoupons from "../pages/Dashboard/AdminRoute/ManageCoupons/ManageCoupons";
 import Payment from "../pages/Dashboard/Payment/Payment";
+import PrivateAdminRoute from "./PrivateAdminRoute";
+import PrivateRoute from "./PrivateRoute";
 
 const Dashboard = lazy(() => import("../pages/Dashboard/Dashboard"));
 
@@ -39,30 +41,60 @@ export const DashboardRoute = [
         path: "payment-history",
         element: <PaymentHistory />,
       },
-      // admin route
-      {
-        path: "admin-profile",
-        element: <AdminProfile></AdminProfile>,
-      },
-      {
-        path: "manage-members",
-        element: <ManageMembers />,
-      },
-      {
-        path: "make-announcement",
-        element: <MakeAnnouncement></MakeAnnouncement>,
-      },
-      {
-        path: "agreement-requests",
-        element: <AgreementRequest></AgreementRequest>,
-      },
-      {
-        path: "manage-coupons",
-        element: <ManageCoupons />,
-      },
       {
         path: "payment",
         element: <Payment></Payment>,
+      },
+      // admin route
+      {
+        path: "admin-profile",
+        element: (
+          <PrivateRoute>
+            <PrivateAdminRoute>
+              <AdminProfile></AdminProfile>
+            </PrivateAdminRoute>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "manage-members",
+        element: (
+          <PrivateRoute>
+            <PrivateAdminRoute>
+              <ManageMembers />
+            </PrivateAdminRoute>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "make-announcement",
+        element: (
+          <PrivateRoute>
+            <PrivateAdminRoute>
+              <MakeAnnouncement></MakeAnnouncement>
+            </PrivateAdminRoute>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "agreement-requests",
+        element: (
+          <PrivateRoute>
+            <PrivateAdminRoute>
+              <AgreementRequest></AgreementRequest>
+            </PrivateAdminRoute>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "manage-coupons",
+        element: (
+          <PrivateRoute>
+            <PrivateAdminRoute>
+              <ManageCoupons />
+            </PrivateAdminRoute>
+          </PrivateRoute>
+        ),
       },
     ],
   },
