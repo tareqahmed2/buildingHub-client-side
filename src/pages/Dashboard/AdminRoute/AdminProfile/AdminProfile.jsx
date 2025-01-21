@@ -2,16 +2,18 @@ import React from "react";
 import useAuth from "../../../../hooks/useAuth";
 import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 
 const AdminProfile = () => {
   // Fake data
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
   //for find all users
   const { data: allUsers = [], refetch } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const res = await axiosPublic.get("/all-users");
+      const res = await axiosSecure.get("/all-users");
       return res.data;
     },
   });
@@ -19,21 +21,21 @@ const AdminProfile = () => {
   const { data: allMembers = [] } = useQuery({
     queryKey: ["members"],
     queryFn: async () => {
-      const res = await axiosPublic.get("/all-members");
+      const res = await axiosSecure.get("/all-members");
       return res.data;
     },
   });
   const { data: apartments = [] } = useQuery({
     queryKey: ["apartments"],
     queryFn: async () => {
-      const res = await axiosPublic.get("/apartments");
+      const res = await axiosSecure.get("/apartments");
       return res.data;
     },
   });
   const { data: bookedRooms = [] } = useQuery({
     queryKey: ["bookedRooms"],
     queryFn: async () => {
-      const res = await axiosPublic.get("/bookedRooms");
+      const res = await axiosSecure.get("/bookedRooms");
       return res.data;
     },
   });

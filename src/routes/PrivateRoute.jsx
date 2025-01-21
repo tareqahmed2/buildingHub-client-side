@@ -11,7 +11,6 @@ const PrivateRoute = ({ children }) => {
 
   useEffect(() => {
     if (!user) {
-      // Redirect to login with original location
       navigate("/login", { state: { from: location } });
     } else {
       setLoading(false);

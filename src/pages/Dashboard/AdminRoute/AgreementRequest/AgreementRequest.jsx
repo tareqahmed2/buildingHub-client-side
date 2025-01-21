@@ -4,9 +4,10 @@ import useAuth from "../../../../hooks/useAuth";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 const AgreementRequest = () => {
   const { setLoading } = useAuth();
-  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
   const {
     data: agreementRequest = [],
@@ -15,7 +16,7 @@ const AgreementRequest = () => {
     refetch,
   } = useQuery({
     queryKey: ["agreements"],
-    queryFn: () => axiosPublic.get("/agreements").then((res) => res.data),
+    queryFn: () => axiosSecure.get("/agreements").then((res) => res.data),
     onSuccess: () => {
       setLoading(false);
     },

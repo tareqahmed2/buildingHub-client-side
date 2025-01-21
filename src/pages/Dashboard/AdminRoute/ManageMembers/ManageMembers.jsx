@@ -3,10 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 
 const ManageMembers = () => {
   const [loading, setLoading] = useState(false);
-  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
 
   // Query to fetch all members
   const {
@@ -16,7 +17,7 @@ const ManageMembers = () => {
   } = useQuery({
     queryKey: ["members"],
     queryFn: async () => {
-      const res = await axiosPublic.get("/all-members");
+      const res = await axiosSecure.get("/all-members");
       return res.data;
     },
     onSuccess: () => setLoading(false),

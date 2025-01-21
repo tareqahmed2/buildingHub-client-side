@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const Profile = () => {
   const { user } = useAuth();
   const [agreements, setAgreements] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Loading state
-  const axiosPublic = useAxiosPublic();
-
+  const axiosSecure = useAxiosSecure();
   useEffect(() => {
     if (user?.email) {
       setIsLoading(true); // Start loading
-      axiosPublic
+      axiosSecure
         .get(`/agreements/${user.email}`)
         .then((res) => {
           setAgreements(res.data);

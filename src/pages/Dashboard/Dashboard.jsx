@@ -21,7 +21,7 @@ const Dashboard = () => {
   const location = useLocation();
   const [userFromCollection, setUserFromCollection] = useState([]);
   useEffect(() => {
-    axiosPublic.get(`/all-users/${user.email}`).then((res) => {
+    axiosPublic.get(`/all-users/${user?.email}`).then((res) => {
       setUserFromCollection(res.data);
     });
   }, []);

@@ -21,6 +21,20 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const axiosPublic = useAxiosPublic();
   const googleProvider = new GoogleAuthProvider();
+  //function of jwt post
+  const fetchAndStoreJWT = async (email) => {
+    try {
+      const response = await axiosPublic.post("/jwt", { email });
+      const { token } = response.data;
+
+      if (token) {
+        // Store JWT in localStorage
+        localStorage.setItem("authToken", token);
+      }
+    } catch (error) {
+      console.error("Error fetching JWT:", error);
+    }
+  };
   // Function to send user data to the backend
 
   const storeUserInformation = async (uid, email, displayName, photoURL) => {
@@ -148,8 +162,11 @@ const AuthProvider = ({ children }) => {
           currentUser?.displayName,
           currentUser?.photoURL
         );
+        await fetchAndStoreJWT(currentUser.email);
       } else {
         setUser(null);
+
+        await localStorage.removeItem("authToken");
       }
       setLoading(false);
     });
@@ -164,6 +181,7 @@ const AuthProvider = ({ children }) => {
     signInWithEmailPassword,
     signInWithGoogle,
     signOutUser,
+    auth,
   };
 
   // Render spinner while loading
