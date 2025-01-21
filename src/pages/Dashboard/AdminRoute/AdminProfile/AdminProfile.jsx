@@ -3,52 +3,45 @@ import useAuth from "../../../../hooks/useAuth";
 import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
+import { FaSpinner } from "react-icons/fa";
 
 const AdminProfile = () => {
-  // Fake data
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
   const axiosSecure = useAxiosSecure();
-  //for find all users
-  const { data: allUsers = [], refetch } = useQuery({
+
+  const { data: allUsers = [], isLoading: usersLoading } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
       const res = await axiosSecure.get("/all-users");
       return res.data;
     },
   });
-  //members
-  const { data: allMembers = [] } = useQuery({
+
+  const { data: allMembers = [], isLoading: membersLoading } = useQuery({
     queryKey: ["members"],
     queryFn: async () => {
       const res = await axiosSecure.get("/all-members");
       return res.data;
     },
   });
-  const { data: apartments = [] } = useQuery({
+
+  const { data: apartments = [], isLoading: apartmentsLoading } = useQuery({
     queryKey: ["apartments"],
     queryFn: async () => {
       const res = await axiosSecure.get("/apartments");
       return res.data;
     },
   });
-  const { data: bookedRooms = [] } = useQuery({
+
+  const { data: bookedRooms = [], isLoading: bookedRoomsLoading } = useQuery({
     queryKey: ["bookedRooms"],
     queryFn: async () => {
       const res = await axiosSecure.get("/bookedRooms");
       return res.data;
     },
   });
-  const adminData = {
-    name: "John Doe",
-    image: "https://via.placeholder.com/150",
-    email: "john.doe@example.com",
-    totalRooms: 150,
-    availableRooms: 90,
-    unavailableRooms: 60,
-    users: 500,
-    members: 450,
-  };
+
   const availableRooms = apartments.length - bookedRooms.length;
   const totalRooms = apartments.length;
   const unavailableRooms = bookedRooms.length;
@@ -61,7 +54,6 @@ const AdminProfile = () => {
   return (
     <div className="container mx-auto p-5">
       <div className="flex flex-col md:flex-row items-center bg-white p-6 rounded-lg shadow-md">
-        {/* Admin Image */}
         <div className="flex justify-center md:justify-start mb-4 md:mb-0">
           <img
             src={user?.photoURL}
@@ -70,7 +62,6 @@ const AdminProfile = () => {
           />
         </div>
 
-        {/* Admin Details */}
         <div className="md:ml-8 text-center md:text-left">
           <h1 className="text-3xl font-semibold text-gray-800">
             {user?.displayName}
@@ -79,53 +70,83 @@ const AdminProfile = () => {
         </div>
       </div>
 
-      {/* Admin Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        {/* Total Rooms */}
         <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
           <h3 className="text-xl font-semibold text-gray-700">Total Rooms</h3>
-          <p className="text-2xl font-bold text-blue-600">
-            {apartments.length}
-          </p>
+          {apartmentsLoading ? (
+            <FaSpinner className="animate-spin text-3xl text-blue-500 mx-auto" />
+          ) : (
+            <p className="text-2xl font-bold text-blue-600">
+              {apartments.length}
+            </p>
+          )}
         </div>
 
+        {/* Available Rooms */}
         <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
           <h3 className="text-xl font-semibold text-gray-700">
             Available Rooms
           </h3>
-          <p className="text-2xl font-bold text-green-600">
-            {apartments?.length - bookedRooms.length}
-          </p>
-          <p className="text-gray-500">
-            ({availablePercentage}% of total rooms)
-          </p>
+          {apartmentsLoading || bookedRoomsLoading ? (
+            <FaSpinner className="animate-spin text-3xl text-green-500 mx-auto" />
+          ) : (
+            <>
+              <p className="text-2xl font-bold text-green-600">
+                {availableRooms}
+              </p>
+              <p className="text-gray-500">
+                ({availablePercentage}% of total rooms)
+              </p>
+            </>
+          )}
         </div>
 
+        {/* Unavailable Rooms */}
         <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
           <h3 className="text-xl font-semibold text-gray-700">
             Unavailable Rooms
           </h3>
-          <p className="text-2xl font-bold text-red-600">
-            {bookedRooms.length}
-          </p>
-          <p className="text-gray-500">
-            ({unavailablePercentage}% of total rooms)
-          </p>
+          {bookedRoomsLoading ? (
+            <FaSpinner className="animate-spin text-3xl text-red-500 mx-auto" />
+          ) : (
+            <>
+              <p className="text-2xl font-bold text-red-600">
+                {unavailableRooms}
+              </p>
+              <p className="text-gray-500">
+                ({unavailablePercentage}% of total rooms)
+              </p>
+            </>
+          )}
         </div>
 
+        {/* Users */}
         <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
           <h3 className="text-xl font-semibold text-gray-700">
             Users in Database
           </h3>
-          <p className="text-2xl font-bold text-blue-600">{allUsers.length}</p>
+          {usersLoading ? (
+            <FaSpinner className="animate-spin text-3xl text-blue-500 mx-auto" />
+          ) : (
+            <p className="text-2xl font-bold text-blue-600">
+              {allUsers.length}
+            </p>
+          )}
         </div>
 
+        {/* Members */}
         <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
           <h3 className="text-xl font-semibold text-gray-700">
             Members in Database
           </h3>
-          <p className="text-2xl font-bold text-green-600">
-            {allMembers?.length}
-          </p>
+          {membersLoading ? (
+            <FaSpinner className="animate-spin text-3xl text-green-500 mx-auto" />
+          ) : (
+            <p className="text-2xl font-bold text-green-600">
+              {allMembers.length}
+            </p>
+          )}
         </div>
       </div>
     </div>

@@ -3,10 +3,11 @@ import Swal from "sweetalert2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import useAxiosPublic from "../../../../hooks/useAxiosPublic";
+
+import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 
 const ManageCoupons = () => {
-  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
   const [newCoupon, setNewCoupon] = useState({
@@ -30,7 +31,7 @@ const ManageCoupons = () => {
   const { data: coupons, isLoading } = useQuery({
     queryKey: ["coupons"],
     queryFn: async () => {
-      const response = await axiosPublic.get("/coupons");
+      const response = await axiosSecure.get("/coupons");
       return response.data;
     },
   });
@@ -38,7 +39,7 @@ const ManageCoupons = () => {
   // Mutation for adding a new coupon
   const addCouponMutation = useMutation({
     mutationFn: async (newCoupon) => {
-      const response = await axiosPublic.post("/coupons", {
+      const response = await axiosSecure.post("/coupons", {
         ...newCoupon,
         expiryDate: formatDate(newCoupon.expiryDate),
       });
@@ -107,7 +108,9 @@ const ManageCoupons = () => {
       {/* Coupons Table */}
       <div className="mt-6 overflow-x-auto">
         {isLoading ? (
-          <p className="text-center text-gray-500">Loading coupons...</p>
+          <div className="flex justify-center items-center">
+            <span className="loading loading-spinner loading-lg text-blue-500"></span>
+          </div>
         ) : (
           <table className="min-w-full bg-white rounded-lg shadow-md">
             <thead>

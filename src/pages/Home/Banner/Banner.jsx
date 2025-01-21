@@ -5,6 +5,7 @@ import Slider from "react-slick";
 import g1 from "../../../assets/banner/banner1.jpg";
 import g2 from "../../../assets/banner/banner2.jpg";
 import g3 from "../../../assets/banner/banner3.jpg";
+import { useNavigate } from "react-router-dom";
 
 const Banner = () => {
   const settings = {
@@ -24,6 +25,7 @@ const Banner = () => {
       block: "start",
     });
   };
+  const navigate = useNavigate();
 
   return (
     <div className="max-w-screen-xl mx-auto py-5 px-2 bg-gray-800">
@@ -37,7 +39,7 @@ const Banner = () => {
             ></div>
             <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center px-4">
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                Apartment Building Management System
+                About Building Management System
               </h2>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl mb-6">
                 Effortlessly manage your building with a powerful and
@@ -62,15 +64,14 @@ const Banner = () => {
             ></div>
             <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center px-4">
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                Seamless User and Admin Experiences
+                Discover Exciting Coupon Deals
               </h2>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl mb-6">
-                Enjoy intuitive navigation and advanced tools designed for both
-                users and administrators to enhance productivity and
-                satisfaction.
+                Unlock amazing discounts and exclusive offers designed to
+                maximize your savings and shopping experience.
               </p>
               <button
-                onClick={() => scrollToSection("user-admin")}
+                onClick={() => scrollToSection("coupon-deals")}
                 className="px-4 py-2 sm:px-6 sm:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
               >
                 Learn More
@@ -86,18 +87,17 @@ const Banner = () => {
             ></div>
             <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center px-4">
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                Smart Apartment Management
+                Explore All Apartment Rooms
               </h2>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl mb-6">
-                Streamline apartment management with automation and secure
-                functionalities, ensuring a seamless living and working
-                environment for all.
+                Browse through all available apartment rooms, each tailored for
+                comfort and designed to meet your needs.
               </p>
               <button
-                onClick={() => scrollToSection("smart-management")}
+                onClick={() => navigate("/apartment")}
                 className="px-4 py-2 sm:px-6 sm:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
               >
-                Get Started
+                View Rooms
               </button>
             </div>
           </div>

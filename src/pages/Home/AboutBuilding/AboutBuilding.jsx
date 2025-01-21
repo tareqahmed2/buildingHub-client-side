@@ -27,7 +27,10 @@ const buildingDetails = [
 
 const AboutBuilding = () => {
   return (
-    <section className="bg-blue-100 max-w-screen-xl mx-auto my-10 rounded-md py-10 px-2">
+    <section
+      id="building-management"
+      className="bg-blue-100 max-w-screen-xl mx-auto my-10 rounded-md py-10 px-2"
+    >
       <div className=" text-center">
         <h2 className="text-4xl font-bold text-blue-700 mb-8">
           About the Building

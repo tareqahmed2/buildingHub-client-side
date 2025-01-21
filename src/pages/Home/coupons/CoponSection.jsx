@@ -41,7 +41,10 @@ const CouponSection = () => {
   };
 
   return (
-    <section className="py-16 px-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 max-w-screen-xl mx-auto rounded-lg">
+    <section
+      id="coupon-deals"
+      className="py-16 px-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 max-w-screen-xl mx-auto rounded-lg"
+    >
       <div className=" text-center">
         <h2 className="text-4xl font-bold text-white mb-8">
           Exclusive Coupons

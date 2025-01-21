@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import { toast } from "react-toastify";
+import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 
 const MakeAnnouncement = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
-  const axiosPublic = useAxiosPublic();
-
+  const axiosSecure = useAxiosSecure();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true); // Set loading state to true while submitting
 
     try {
-      const response = await axiosPublic.post("/announcements", {
+      const response = await axiosSecure.post("/announcements", {
         title,
         description,
       });
