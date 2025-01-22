@@ -8,11 +8,16 @@ The **Building Management System (BMS)** is designed to simplify the management 
 
 ## 🔗 **Live Site URL**
 
-[Visit Building Management System](#)
+[https://buildinghub.netlify.app](#)
+
+---
 
 ---
 
 ## 🔗 Collect this email for see the admin route
+
+turjo@admin.com
+admin pass: Turjo123
 
 ---
 
