@@ -15,11 +15,15 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
 const axiosPublic = useAxiosPublic();
 
 const fetchAgreement = async (email) => {
-  const response = await axiosPublic.get(`/agreements?email=${email}`);
-  if (response.data && response.data.length > 0) {
-    return response.data[0];
+  try {
+    const response = await axiosPublic.get(`/payments/${email}`);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching agreements:", error);
+    toast.error("Failed to load agreements");
+  } finally {
   }
-  throw new Error("Agreement not found");
 };
 
 const fetchCoupon = async (coupon) => {

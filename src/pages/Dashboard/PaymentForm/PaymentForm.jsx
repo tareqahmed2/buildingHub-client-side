@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const PaymentForm = () => {
   const navigate = useNavigate();
@@ -18,26 +19,23 @@ const PaymentForm = () => {
   const [isCouponUsedModalOpen, setIsCouponUsedModalOpen] = useState(false); // Modal state
 
   const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
 
   // Fetch agreements for the logged-in user
   useEffect(() => {
     const fetchAgreements = async () => {
       try {
-        const response = await axiosPublic.get(`/agreements?email=${email}`);
-        if (response.data && response.data.length > 0) {
-          setAgreement(response.data);
-          setAppliedRent(response.data[0].rent);
-        } else {
-          console.log("No agreement found for this user.");
-        }
+        const response = await axiosSecure.get(`/agreements/${email}`);
+        setAgreement(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching agreements:", error);
+        toast.error("Failed to load agreements");
+      } finally {
       }
     };
 
-    if (email) {
-      fetchAgreements();
-    }
+    fetchAgreements();
   }, [email]);
 
   // Handle coupon application
@@ -48,21 +46,21 @@ const PaymentForm = () => {
     }
 
     try {
-      const response = await axiosPublic.get(`/coupons/${coupon}`);
+      const response = await axiosSecure.get(`/coupons/${coupon}`);
       if (response.data && response.data.length > 0) {
         const discountPercentage = response.data[0].discountPercentage;
 
         // Check if coupon is already used
-        if (agreement[0].couponUsed === coupon) {
-          setIsCouponUsedModalOpen(true); // Show modal if coupon is already used
+        if (agreement.couponUsed === coupon) {
+          setIsCouponUsedModalOpen(true); // Show modal
           return;
         }
 
         const discountedRent =
-          agreement[0].rent - (agreement[0].rent * discountPercentage) / 100;
+          agreement.rent - (agreement.rent * discountPercentage) / 100;
 
         // Update the database with the new rent and couponUsed property
-        await axiosPublic.patch(`/agreements/${agreement[0]._id}`, {
+        await axiosPublic.patch(`/agreements/${agreement._id}`, {
           rent: discountedRent,
           couponUsed: coupon,
         });
@@ -71,9 +69,7 @@ const PaymentForm = () => {
         setMessage(
           `Coupon applied! ${discountPercentage}% discount applied. Rent updated successfully.`
         );
-        toast.success(
-          `Coupon applied! ${discountPercentage}% discount applied!`
-        );
+        toast.success("Coupon applied and rent updated!");
       } else {
         setAppliedRent(agreement[0].rent);
         setMessage("Invalid coupon code.");
@@ -91,76 +87,61 @@ const PaymentForm = () => {
     setIsCouponUsedModalOpen(false);
   };
 
-  // Handle Pay Now button click
-  const handlePayNow = () => {
-    if (!month) {
-      toast.warn("Please select a month to proceed.");
-      return;
-    }
-    if (!coupon.trim()) {
-      toast.warn("Please enter a coupon code to proceed.");
-      return; // Prevent proceeding if coupon is not entered
-    }
-
-    navigate("/dashboard/payment");
-  };
-
   return (
     <div className="p-6 max-w-lg mx-auto bg-white rounded shadow">
       <h2 className="text-xl font-bold mb-4">Make Payment</h2>
       <form className="space-y-4">
         {/* Member details */}
-        {agreement.length > 0 && (
+        {/* {agreement.length > 0 && (
           <>
-            <div className="mb-4">
-              <label className="block text-gray-700">Member Email</label>
-              <input
-                type="email"
-                readOnly
-                value={agreement[0].userEmail || ""}
-                className="w-full p-2 border rounded bg-gray-100"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Floor</label>
-              <input
-                type="text"
-                readOnly
-                value={agreement[0].floor || ""}
-                className="w-full p-2 border rounded bg-gray-100"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Block Name</label>
-              <input
-                type="text"
-                readOnly
-                value={agreement[0].block || ""}
-                className="w-full p-2 border rounded bg-gray-100"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">
-                Apartment No/Room No
-              </label>
-              <input
-                type="text"
-                readOnly
-                value={agreement[0].aptNo || ""}
-                className="w-full p-2 border rounded bg-gray-100"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Rent</label>
-              <input
-                type="text"
-                readOnly
-                value={`$${(appliedRent || agreement[0].rent).toFixed(2)}`}
-                className="w-full p-2 border rounded bg-gray-100"
-              />
-            </div>
+           
           </>
-        )}
+        )} */}
+        <div className="mb-4">
+          <label className="block text-gray-700">Member Email</label>
+          <input
+            type="email"
+            readOnly
+            value={agreement.userEmail || ""}
+            className="w-full p-2 border rounded bg-gray-100"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Floor</label>
+          <input
+            type="text"
+            readOnly
+            value={agreement.floor || ""}
+            className="w-full p-2 border rounded bg-gray-100"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Block Name</label>
+          <input
+            type="text"
+            readOnly
+            value={agreement.block || ""}
+            className="w-full p-2 border rounded bg-gray-100"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Apartment No/Room No</label>
+          <input
+            type="text"
+            readOnly
+            value={agreement.aptNo || ""}
+            className="w-full p-2 border rounded bg-gray-100"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Rent</label>
+          <input
+            type="text"
+            readOnly
+            value={`$${appliedRent || agreement.rent}`}
+            className="w-full p-2 border rounded bg-gray-100"
+          />
+        </div>
 
         {/* Month Selection */}
         <div className="mb-4">
@@ -233,7 +214,13 @@ const PaymentForm = () => {
         {/* Pay Button */}
         <button
           type="button"
-          onClick={handlePayNow}
+          onClick={() => {
+            if (!month) {
+              toast.warn("Please select a month to proceed.");
+              return;
+            }
+            navigate("/dashboard/payment");
+          }}
           className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
         >
           Pay Now

@@ -19,7 +19,17 @@ const CouponSection = () => {
     fetchCoupons();
   }, []);
 
-  const handleApplyCoupon = (couponCode) => {
+  const handleApplyCoupon = (couponCode, isAvailable) => {
+    if (!isAvailable) {
+      Swal.fire({
+        title: "Coupon Unavailable!",
+        text: "This coupon isn't available right now.",
+        icon: "error",
+        confirmButtonText: "Close",
+      });
+      return;
+    }
+
     navigator.clipboard
       .writeText(couponCode)
       .then(() => {
@@ -75,12 +85,27 @@ const CouponSection = () => {
                 <p className="text-lg font-bold text-indigo-600 mt-2">
                   {coupon.discountPercentage}% OFF
                 </p>
+                <div className="mt-2">
+                  <span
+                    className={`badge text-lg font-bold ${
+                      coupon.availability
+                        ? "badge-primary text-white"
+                        : "badge-secondary text-gray-800"
+                    }`}
+                  >
+                    {coupon.availability
+                      ? "Coupon Is Available"
+                      : "Coupon Not Available"}
+                  </span>
+                </div>
               </div>
 
               <div className="card-footer p-4 bg-gradient-to-l from-pink-400 to-indigo-300 text-center rounded-b-lg">
                 <button
                   className="bg-indigo-600 text-white py-2 px-4 rounded-lg transform hover:scale-105 transition-all duration-200"
-                  onClick={() => handleApplyCoupon(coupon.code)}
+                  onClick={() =>
+                    handleApplyCoupon(coupon.code, coupon.availability)
+                  }
                 >
                   Apply Coupon
                 </button>

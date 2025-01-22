@@ -90,41 +90,45 @@ const Apartment = () => {
   };
 
   return (
-    <div className="container max-w-screen-xl mx-auto p-6">
+    <div className="container max-w-screen-xl mx-auto p-4 sm:p-6">
       <div className="mb-6">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-4">
           Available Apartments
         </h2>
-        <div className="flex justify-center items-center space-x-4 mb-4">
-          <label htmlFor="min-rent" className="text-gray-600">
-            Min Rent:
-          </label>
-          <input
-            type="number"
-            id="min-rent"
-            className="px-3 py-2 border rounded"
-            value={searchRange[0]}
-            onChange={(e) =>
-              setSearchRange([Number(e.target.value), searchRange[1]])
-            }
-          />
-          <label htmlFor="max-rent" className="text-gray-600">
-            Max Rent:
-          </label>
-          <input
-            type="number"
-            id="max-rent"
-            className="px-3 py-2 border rounded"
-            value={searchRange[1]}
-            onChange={(e) =>
-              setSearchRange([searchRange[0], Number(e.target.value)])
-            }
-          />
+        <div className="flex flex-wrap justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-4">
+          <div className="flex flex-col items-start space-y-2">
+            <label htmlFor="min-rent" className="text-gray-600">
+              Min Rent:
+            </label>
+            <input
+              type="number"
+              id="min-rent"
+              className="px-3 py-2 border rounded w-full sm:w-auto"
+              value={searchRange[0]}
+              onChange={(e) =>
+                setSearchRange([Number(e.target.value), searchRange[1]])
+              }
+            />
+          </div>
+          <div className="flex flex-col items-start space-y-2">
+            <label htmlFor="max-rent" className="text-gray-600">
+              Max Rent:
+            </label>
+            <input
+              type="number"
+              id="max-rent"
+              className="px-3 py-2 border rounded w-full sm:w-auto"
+              value={searchRange[1]}
+              onChange={(e) =>
+                setSearchRange([searchRange[0], Number(e.target.value)])
+              }
+            />
+          </div>
         </div>
       </div>
 
       {/* Apartments List */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6">
         {filteredApartments.map((apartment) => (
           <div
             key={apartment._id}
@@ -135,12 +139,12 @@ const Apartment = () => {
               alt={`Apartment ${apartment.aptNo}`}
               className="w-full h-40 object-cover rounded-md mb-4"
             />
-            <h3 className="text-xl font-semibold text-gray-700">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-700">
               Apartment No: {apartment.aptNo}
             </h3>
             <p className="text-sm text-gray-500">Floor: {apartment.floor}</p>
             <p className="text-sm text-gray-500">Block: {apartment.block}</p>
-            <p className="text-lg font-bold text-gray-900">
+            <p className="text-base sm:text-lg font-bold text-gray-900">
               Rent: {apartment.rent} TK
             </p>
             <button
@@ -154,7 +158,7 @@ const Apartment = () => {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center mt-6">
+      <div className="flex justify-center items-center mt-6 space-x-2">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}

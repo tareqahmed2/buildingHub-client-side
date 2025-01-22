@@ -36,7 +36,7 @@ const AgreementRequest = () => {
       cancelButtonText: "No, cancel!",
     }).then((result) => {
       if (result.isConfirmed) {
-        axiosPublic
+        axiosSecure
           .put(`/agreements/${id}/accept`, { userEmail, id })
           .then((res) => {
             const updatedAgreement = res.data;
@@ -82,7 +82,7 @@ const AgreementRequest = () => {
       cancelButtonText: "No, cancel!",
     }).then((result) => {
       if (result.isConfirmed) {
-        axiosPublic
+        axiosSecure
           .put(`/agreements/${id}/reject`)
           .then((res) => {
             const updatedAgreement = res.data;

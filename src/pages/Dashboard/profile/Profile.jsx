@@ -15,15 +15,16 @@ const Profile = () => {
         .get(`/agreements/${user.email}`)
         .then((res) => {
           setAgreements(res.data);
+          console.log(res.data);
         })
         .finally(() => {
           setIsLoading(false); // Stop loading
         });
     }
-  }, [user?.email]);
+  }, []);
 
   // Destructuring agreement data
-  const agreement = agreements[0] || {};
+  const agreement = agreements || {};
 
   return (
     <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen">

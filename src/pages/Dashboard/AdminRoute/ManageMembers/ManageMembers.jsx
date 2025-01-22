@@ -8,6 +8,7 @@ import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 const ManageMembers = () => {
   const [loading, setLoading] = useState(false);
   const axiosSecure = useAxiosSecure();
+  const axiosPublic = useAxiosPublic();
 
   // Query to fetch all members
   const {
@@ -39,7 +40,7 @@ const ManageMembers = () => {
       if (result.isConfirmed) {
         try {
           // Send DELETE request to remove the member
-          const response = await axiosPublic.delete(`/remove-member/${id}`);
+          const response = await axiosSecure.delete(`/remove-member/${id}`);
 
           // Check if the response is successful
           if (response.data.deletedCount > 0) {

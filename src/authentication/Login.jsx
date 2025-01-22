@@ -55,7 +55,7 @@ const Login = () => {
         "You have successfully logged in with Google!",
         "success"
       );
-      navigate(from, { replace: true });
+      navigate(from, { replace: true } || "/");
     } catch (error) {
       Swal.fire(
         "Login Failed",

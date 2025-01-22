@@ -7,7 +7,9 @@ import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 
 const MakePayment = () => {
   const navigate = useNavigate();
-  const [agreements, setAgreements] = useState([]);
+  // const [agreements, setAgreements] = useState([]);
+  const [agreement, setAgreement] = useState({});
+
   const { user } = useAuth();
   const email = user.email;
   const axiosPublic = useAxiosPublic();
@@ -21,8 +23,8 @@ const MakePayment = () => {
     const fetchAgreements = async () => {
       setLoading(true); // Start loading
       try {
-        const response = await axiosSecure.get(`/agreements?email=${email}`);
-        setAgreements(response.data);
+        const response = await axiosSecure.get(`/agreements/${email}`);
+        setAgreement(response.data);
       } catch (error) {
         console.error("Error fetching agreements:", error);
         toast.error("Failed to load agreements");
@@ -50,57 +52,58 @@ const MakePayment = () => {
       ) : (
         <form>
           {/* Member details */}
-          {agreements.map((agreement, index) => (
-            <div key={index}>
-              <div className="mb-4">
-                <label className="block text-gray-700">Member Email</label>
-                <input
-                  type="email"
-                  readOnly
-                  value={agreement.userEmail}
-                  className="w-full p-2 border rounded bg-gray-100"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Floor</label>
-                <input
-                  type="text"
-                  readOnly
-                  value={agreement.floor}
-                  className="w-full p-2 border rounded bg-gray-100"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Block Name</label>
-                <input
-                  type="text"
-                  readOnly
-                  value={agreement.block}
-                  className="w-full p-2 border rounded bg-gray-100"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">
-                  Apartment No/Room No
-                </label>
-                <input
-                  type="text"
-                  readOnly
-                  value={agreement.aptNo}
-                  className="w-full p-2 border rounded bg-gray-100"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Rent</label>
-                <input
-                  type="text"
-                  readOnly
-                  value={agreement.rent}
-                  className="w-full p-2 border rounded bg-gray-100"
-                />
-              </div>
+          {/* {agreements.map((agreement, index) => (
+            
+          ))} */}
+          <div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Member Email</label>
+              <input
+                type="email"
+                readOnly
+                value={agreement.userEmail}
+                className="w-full p-2 border rounded bg-gray-100"
+              />
             </div>
-          ))}
+            <div className="mb-4">
+              <label className="block text-gray-700">Floor</label>
+              <input
+                type="text"
+                readOnly
+                value={agreement.floor}
+                className="w-full p-2 border rounded bg-gray-100"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Block Name</label>
+              <input
+                type="text"
+                readOnly
+                value={agreement.block}
+                className="w-full p-2 border rounded bg-gray-100"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">
+                Apartment No/Room No
+              </label>
+              <input
+                type="text"
+                readOnly
+                value={agreement.aptNo}
+                className="w-full p-2 border rounded bg-gray-100"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Rent</label>
+              <input
+                type="text"
+                readOnly
+                value={agreement.rent}
+                className="w-full p-2 border rounded bg-gray-100"
+              />
+            </div>
+          </div>
 
           {/* Payment Button */}
           <button
