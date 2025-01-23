@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import { FaSpinner } from "react-icons/fa";
+import { Helmet } from "react-helmet-async";
 
 const Announcements = () => {
   const [announcements, setAnnouncements] = useState([]);
@@ -35,6 +36,9 @@ const Announcements = () => {
 
   return (
     <div className="announcements-page">
+      <Helmet>
+        <title>Buildinghub | Announcements</title>
+      </Helmet>
       <h2 className="text-2xl font-bold mb-4 text-purple-500">Announcements</h2>
       <div className="announcements-list">
         {announcements.map((announcement, index) => (

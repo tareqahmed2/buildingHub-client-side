@@ -4,6 +4,7 @@ import useAuth from "../../../../hooks/useAuth";
 import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import { toast } from "react-toastify";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
+import { Helmet } from "react-helmet-async";
 
 const MakePayment = () => {
   const navigate = useNavigate();
@@ -57,6 +58,9 @@ const MakePayment = () => {
           ))} */}
           <div>
             <div className="mb-4">
+              <Helmet>
+                <title>Buildinghub | Make Payment</title>
+              </Helmet>
               <label className="block text-gray-700">Member Email</label>
               <input
                 type="email"

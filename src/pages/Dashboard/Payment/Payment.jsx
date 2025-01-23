@@ -10,6 +10,7 @@ import {
 import useAuth from "../../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
+import { Helmet } from "react-helmet-async";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
 const axiosPublic = useAxiosPublic();
@@ -136,6 +137,9 @@ const PaymentForm = () => {
 
   return (
     <div className="p-6 max-w-lg mx-auto bg-white rounded shadow">
+      <Helmet>
+        <title>Buildinghub | Payment</title>
+      </Helmet>
       {agreementData?.payment === "successful" ? (
         <div className="text-center">
           <h2 className="text-2xl font-bold text-green-600">

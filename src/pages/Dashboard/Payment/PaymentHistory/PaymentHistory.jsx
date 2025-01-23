@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import useAuth from "../../../../hooks/useAuth";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
+import { FaSpinner } from "react-icons/fa";
+import { Helmet } from "react-helmet-async";
 
 const PaymentHistory = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const [loading, setLoading] = useState(true);
   const [paymentHistory, setPaymentHistory] = useState([]);
   const email = user?.email;
 
@@ -18,6 +21,7 @@ const PaymentHistory = () => {
           );
 
           setPaymentHistory(response.data);
+          setLoading(false);
         } catch (error) {
           console.error("Error fetching payment history:", error);
         }
@@ -26,9 +30,18 @@ const PaymentHistory = () => {
       fetchPaymentHistory();
     }
   }, [email]);
-
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <FaSpinner className="animate-spin text-3xl text-blue-500" />
+      </div>
+    );
+  }
   return (
     <div>
+      <Helmet>
+        <title>Buildinghub | Payment-History</title>
+      </Helmet>
       <h2 className="text-2xl font-bold mb-4">Payment History</h2>
       {paymentHistory.length > 0 ? (
         <div className="overflow-x-auto">

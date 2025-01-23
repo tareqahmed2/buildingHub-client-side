@@ -8,6 +8,7 @@ import useAuth from "../hooks/useAuth";
 import registerani from "../animation/register.json";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { Helmet } from "react-helmet-async";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -119,6 +120,9 @@ const Register = () => {
   };
   return (
     <div className="flex flex-col max-w-screen-xl mx-auto lg:flex-row items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-4">
+      <Helmet>
+        <title>Buildinghub | Register</title>
+      </Helmet>
       {/* Lottie Animation */}
       <div className="w-full lg:w-1/2 flex justify-center mb-6 lg:mb-0">
         <Player

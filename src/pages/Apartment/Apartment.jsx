@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
-import { toast } from "react-toastify";
+import { cssTransition, toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { FaSpinner } from "react-icons/fa";
+import { Helmet } from "react-helmet-async";
 
 const Apartment = () => {
   const navigate = useNavigate();
-
-  const { user, setLoading } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
   const [userFromCollection, setUserFromCollection] = useState([]);
 
   const [apartments, setApartments] = useState([]);
@@ -18,13 +20,14 @@ const Apartment = () => {
     .get("/apartments")
     .then((res) => {
       setApartments(res.data);
+
       setLoading(false);
     })
     .catch((error) => {
       console.log(error.message);
       setLoading(false);
     });
-  const [searchRange, setSearchRange] = useState([1000, 3000]); // rent range state
+  const [searchRange, setSearchRange] = useState([1000, 3000]);
   const [currentPage, setCurrentPage] = useState(1);
 
   // Handle pagination
@@ -42,7 +45,7 @@ const Apartment = () => {
   );
 
   useEffect(() => {
-    axiosPublic.get(`/all-users/${user.email}`).then((res) => {
+    axiosPublic.get(`/all-users/${user?.email}`).then((res) => {
       setUserFromCollection(res.data);
     });
   }, []);
@@ -62,7 +65,6 @@ const Apartment = () => {
       });
       return;
     }
-    // Logic for storing agreement in the database
     axiosPublic
       .post("/agreement", {
         userName: user?.displayName,
@@ -103,9 +105,18 @@ const Apartment = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
+  if (loading) {
+    return (
+      <div className="flex justify-center min-h-screen items-center h-screen">
+        <FaSpinner className="animate-spin text-3xl text-blue-500" />
+      </div>
+    );
+  }
   return (
     <div className="container max-w-screen-xl mx-auto p-4 sm:p-6">
+      <Helmet>
+        <title>Buildinghub | Apartments</title>
+      </Helmet>
       <div className="mb-6">
         <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-4">
           Available Apartments

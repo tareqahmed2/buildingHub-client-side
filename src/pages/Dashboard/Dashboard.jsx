@@ -10,19 +10,23 @@ import {
   FaBullhorn,
   FaRegHandshake,
   FaGift,
+  FaSpinner,
 } from "react-icons/fa"; // Importing React Icons
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import useAuth from "../../hooks/useAuth";
+import { Helmet } from "react-helmet-async";
 
 const Dashboard = () => {
   const axiosPublic = useAxiosPublic();
   const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const [userFromCollection, setUserFromCollection] = useState([]);
   useEffect(() => {
     axiosPublic.get(`/all-users/${user?.email}`).then((res) => {
       setUserFromCollection(res.data);
+      setLoading(false);
     });
   }, []);
   console.log(userFromCollection);
@@ -38,8 +42,18 @@ const Dashboard = () => {
       }
     }
   }, [userFromCollection, navigate, location.pathname]);
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <FaSpinner className="animate-spin text-3xl text-blue-500" />
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col lg:flex-row max-w-screen-xl mx-auto min-h-screen bg-gray-50">
+      <Helmet>
+        <title>Buildinghub | Dashboard</title>
+      </Helmet>
       {/* Sidebar */}
       <aside className="w-full lg:w-64 bg-gradient-to-b from-blue-600 to-blue-500 text-white shadow-lg lg:h-100vh p-6">
         <div className="mb-8 text-center">

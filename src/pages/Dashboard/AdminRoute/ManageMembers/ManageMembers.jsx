@@ -4,6 +4,7 @@ import { FaSpinner, FaTrash } from "react-icons/fa";
 import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
+import { Helmet } from "react-helmet-async";
 
 const ManageMembers = () => {
   const [loading, setLoading] = useState(false);
@@ -83,6 +84,9 @@ const ManageMembers = () => {
 
   return (
     <div className="overflow-x-auto py-4 px-1 md:px-6">
+      <Helmet>
+        <title>Buildinghub | Manage-Members</title>
+      </Helmet>
       <h2 className="text-2xl font-bold text-center mb-6">Manage Members</h2>
       <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200">
         <table className="min-w-full table-auto">

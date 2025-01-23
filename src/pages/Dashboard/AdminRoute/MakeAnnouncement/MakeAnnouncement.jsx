@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import { toast } from "react-toastify";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
+import { Helmet } from "react-helmet-async";
 
 const MakeAnnouncement = () => {
   const [title, setTitle] = useState("");
@@ -35,6 +36,9 @@ const MakeAnnouncement = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
+      <Helmet>
+        <title>Buildinghub | Make-Announcement</title>
+      </Helmet>
       <h2 className="text-2xl font-bold mb-6 text-center text-purple-500">
         Make Announcement
       </h2>

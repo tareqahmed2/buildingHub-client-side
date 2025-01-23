@@ -4,6 +4,7 @@ import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import { FaSpinner } from "react-icons/fa";
+import { Helmet } from "react-helmet-async";
 
 const AdminProfile = () => {
   const { user } = useAuth();
@@ -53,6 +54,9 @@ const AdminProfile = () => {
 
   return (
     <div className="container mx-auto p-5">
+      <Helmet>
+        <title>Buildinghub | Admin</title>
+      </Helmet>
       <div className="flex flex-col md:flex-row items-center bg-white p-6 rounded-lg shadow-md">
         <div className="flex justify-center md:justify-start mb-4 md:mb-0">
           <img

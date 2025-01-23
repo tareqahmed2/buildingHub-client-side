@@ -4,10 +4,13 @@ import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { FaSpinner } from "react-icons/fa";
+import { Helmet } from "react-helmet-async";
 
 const PaymentForm = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
   const email = user.email;
   const [agreement, setAgreement] = useState([]);
   const [coupon, setCoupon] = useState("");
@@ -27,6 +30,7 @@ const PaymentForm = () => {
       try {
         const response = await axiosSecure.get(`/agreements/${email}`);
         setAgreement(response.data);
+        setLoading(false);
         console.log(response.data);
       } catch (error) {
         console.error("Error fetching agreements:", error);
@@ -86,9 +90,18 @@ const PaymentForm = () => {
   const closeCouponUsedModal = () => {
     setIsCouponUsedModalOpen(false);
   };
-
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <FaSpinner className="animate-spin text-3xl text-blue-500" />
+      </div>
+    );
+  }
   return (
     <div className="p-6 max-w-lg mx-auto bg-white rounded shadow">
+      <Helmet>
+        <title>Buildinghub | Payment-form</title>
+      </Helmet>
       <h2 className="text-xl font-bold mb-4">Make Payment</h2>
       <form className="space-y-4">
         {/* Member details */}

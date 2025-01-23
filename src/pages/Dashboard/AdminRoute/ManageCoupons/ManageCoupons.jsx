@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import { FaEdit } from "react-icons/fa";
+import { Helmet } from "react-helmet-async";
 
 const ManageCoupons = () => {
   const axiosSecure = useAxiosSecure();
@@ -155,6 +156,9 @@ const ManageCoupons = () => {
           </div>
         ) : (
           <table className="min-w-full bg-white rounded-lg shadow-md">
+            <Helmet>
+              <title>Buildinghub | Manage-coupons</title>
+            </Helmet>
             <thead>
               <tr className="bg-gray-100">
                 <th className="text-left p-4 text-gray-700 font-semibold whitespace-nowrap">

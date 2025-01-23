@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { Helmet } from "react-helmet-async";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -28,6 +29,10 @@ const Profile = () => {
 
   return (
     <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen">
+      <Helmet>
+        <title>Buildinghub | Profile</title>
+      </Helmet>
+
       <h1 className="text-4xl font-extrabold text-center text-blue-700 mb-8">
         My Profile
       </h1>

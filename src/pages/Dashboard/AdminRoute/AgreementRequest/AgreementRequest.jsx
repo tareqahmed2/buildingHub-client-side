@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import useAuth from "../../../../hooks/useAuth";
-import { FaCheck, FaTimes } from "react-icons/fa";
+import { FaCheck, FaSpinner, FaTimes } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
+import { Helmet } from "react-helmet-async";
 const AgreementRequest = () => {
-  const { setLoading } = useAuth();
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
   const {
@@ -117,9 +117,18 @@ const AgreementRequest = () => {
       }
     });
   };
-
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <FaSpinner className="animate-spin text-3xl text-blue-500" />
+      </div>
+    );
+  }
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
+      <Helmet>
+        <title>Buildinghub | Agreement Request</title>
+      </Helmet>
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">
         Agreement Requests ({agreementRequest.length})
       </h2>

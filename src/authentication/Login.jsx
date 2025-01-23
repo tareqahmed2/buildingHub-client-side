@@ -7,6 +7,7 @@ import useAuth from "../hooks/useAuth";
 import loginani from "../animation/login.json";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { Helmet } from "react-helmet-async";
 const Login = () => {
   const { signInWithGoogle, signInWithEmailPassword } = useAuth();
   const navigate = useNavigate();
@@ -67,6 +68,9 @@ const Login = () => {
 
   return (
     <div className="flex max-w-screen-xl mx-auto flex-col lg:flex-row items-center justify-center min-h-screen bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400 p-4">
+      <Helmet>
+        <title>Buildinghub | Login</title>
+      </Helmet>
       <div className="w-full lg:w-1/2 flex justify-center mb-6 lg:mb-0">
         <Player
           autoplay
