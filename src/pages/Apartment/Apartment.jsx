@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
@@ -10,6 +10,7 @@ const Apartment = () => {
   const navigate = useNavigate();
 
   const { user, setLoading } = useAuth();
+  const [userFromCollection, setUserFromCollection] = useState([]);
 
   const [apartments, setApartments] = useState([]);
   const axiosPublic = useAxiosPublic();
@@ -40,11 +41,25 @@ const Apartment = () => {
     (apt) => apt.rent >= searchRange[0] && apt.rent <= searchRange[1]
   );
 
+  useEffect(() => {
+    axiosPublic.get(`/all-users/${user.email}`).then((res) => {
+      setUserFromCollection(res.data);
+    });
+  }, []);
+
   const handleAgreement = (apartment) => {
     const currentDate = new Date().toLocaleDateString();
-
     if (!user) {
       navigate("/login");
+      return;
+    }
+    if (userFromCollection?.Role === "admin") {
+      Swal.fire({
+        title: "Admin Access",
+        text: "As an administrator, you cannot give agreement requests.",
+        icon: "warning",
+        button: "OK",
+      });
       return;
     }
     // Logic for storing agreement in the database
