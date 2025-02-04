@@ -1,5 +1,7 @@
 # Building Management System - Frontend
 
+![Homepage Screenshot](./src/assets/readmebanner.png)
+
 ## Project Overview
 
 The **Building Management System (BMS)** is designed to simplify the management of a single building by providing seamless experiences for both users and admins. This project emphasizes user-friendly navigation, responsive design, and advanced functionalities.
@@ -61,3 +63,52 @@ REACT_APP_FIREBASE_STORAGE_BUCKET=your_storage_bucket
 REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 REACT_APP_FIREBASE_APP_ID=your_app_id
 ```
+
+## Step-by-Step Guide to Run the Project Locally
+
+1. **Clone the Repository:**
+
+   - Open your terminal or command prompt and clone the repository to your local machine using the following command:
+     ```bash
+     git clone https://github.com/tareqahmed2/buildingHub-client-side
+     ```
+
+2. **Navigate to the Project Directory:**
+
+   - After cloning the repository, go into the project folder:
+     ```bash
+     cd <project-folder>
+     ```
+
+3. **Install Dependencies for Client-Side:**
+
+   - Navigate to the `client` folder:
+     ```bash
+     cd client
+     ```
+   - Install the necessary dependencies for the frontend:
+     ```bash
+     npm install
+     ```
+
+4. **Install Dependencies for client-Side:**
+
+   - Now, go to the `server` folder:
+     ```bash
+     cd ../client
+     ```
+   - Install the required dependencies for the frontend:
+     ```bash
+     npm install
+     ```
+
+5. **Set Up Environment Variables:**
+
+   - Create a `.env` file in the root directory of both the `client` and `server` folders.
+   - Add the necessary environment variables such as API keys and database URIs.
+
+   Example for **Client (`client/.env`):**
+
+   ```env
+   REACT_APP_API_URL=http://localhost:5000
+   ```
