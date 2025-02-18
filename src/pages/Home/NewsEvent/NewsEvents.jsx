@@ -15,6 +15,12 @@ const NewsEvents = () => {
       title: "Maintenance Notice",
       description: "Scheduled maintenance on all elevators next week.",
     },
+    {
+      id: 3,
+      title: "Holiday Announcement",
+      description:
+        "Our office will be closed for the national holiday on Friday, 25th February.",
+    },
   ];
 
   // Variants for the container to stagger children animations

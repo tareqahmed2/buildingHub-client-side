@@ -23,6 +23,28 @@ const Login = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  // demo admin login
+  const demoAdminLogin = async () => {
+    const email = "turjo@admin.com";
+    const pass = "Turjo123";
+    try {
+      await signInWithEmailPassword(email, pass);
+      navigate("/", { replace: true });
+    } catch (error) {
+      setError("Failed to log in as admin. Please try again.");
+    }
+  };
+
+  const demoMemberLogin = async () => {
+    const email = "tareqahmed347396@gmail.com";
+    const pass = "Tareq123";
+    try {
+      await signInWithEmailPassword(email, pass);
+      navigate("/", { replace: true });
+    } catch (error) {
+      setError("Failed to log in as member. Please try again.");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,7 +89,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex max-w-screen-xl mx-auto flex-col lg:flex-row items-center justify-center min-h-screen bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400 p-4">
+    <div className="flex rounded-lg mt-10 max-w-screen-xl mx-auto flex-col lg:flex-row items-center justify-center min-h-screen bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400 p-4">
       <Helmet>
         <title>Buildinghub | Login</title>
       </Helmet>
@@ -135,10 +157,24 @@ const Login = () => {
           </div>
 
           {error && <p className="text-sm text-red-500">{error}</p>}
+          <button
+            type="button"
+            onClick={demoAdminLogin}
+            className="w-full my-3 px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-300 transition duration-300"
+          >
+            Demo Admin
+          </button>
+          <button
+            type="button"
+            onClick={demoMemberLogin}
+            className="w-full my-3 px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-300 transition duration-300"
+          >
+            Demo Member
+          </button>
 
           <button
             type="submit"
-            className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+            className="w-full my-3 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
           >
             Login
           </button>

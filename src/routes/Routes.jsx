@@ -6,6 +6,7 @@ import Home from "../pages/Home/Home";
 import Apartment from "../pages/Apartment/Apartment";
 import { DashboardRoute } from "./DashboardRoute";
 import ErrorPage from "../components/ErrorPage";
+import AboutUs from "../pages/About/AboutUs";
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ export const router = createBrowserRouter([
       {
         path: "apartment",
         element: <Apartment></Apartment>,
+      },
+      {
+        path: "about",
+        element: <AboutUs></AboutUs>,
       },
     ],
   },

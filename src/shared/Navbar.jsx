@@ -17,7 +17,7 @@ const Navbar = () => {
         <NavLink
           to="/"
           className={({ isActive }) =>
-            isActive ? "text-blue-600" : "hover:text-blue-600"
+            isActive ? "text-blue-600 font-bold" : "hover:text-blue-600"
           }
         >
           Home
@@ -27,10 +27,20 @@ const Navbar = () => {
         <NavLink
           to="/apartment"
           className={({ isActive }) =>
-            isActive ? "text-blue-600" : "hover:text-blue-600"
+            isActive ? "text-blue-600 font-bold" : "hover:text-blue-600"
           }
         >
           Apartments
+        </NavLink>
+      </li>{" "}
+      <li>
+        <NavLink
+          to="/about"
+          className={({ isActive }) =>
+            isActive ? "text-blue-600 font-bold" : "hover:text-blue-600"
+          }
+        >
+          About Us
         </NavLink>
       </li>
     </>
