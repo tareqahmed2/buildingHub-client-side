@@ -28,7 +28,7 @@ const Banner = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-screen-xl mx-auto py-5 px-2 bg-gray-800">
+    <div className="max-w-screen-xl mx-auto py-5 px-2 mt-10 bg-gray-800">
       <div className="container mx-auto px-4">
         <Slider {...settings}>
           {/* Slide 1 */}
