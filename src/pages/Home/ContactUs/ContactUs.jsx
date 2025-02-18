@@ -18,6 +18,8 @@ const ContactUs = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Add form submission logic here (e.g., API call)
+
+    //
     alert("Your message has been sent!");
     setFormData({ name: "", email: "", message: "" });
   };
