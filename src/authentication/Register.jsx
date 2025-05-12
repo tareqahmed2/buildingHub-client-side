@@ -9,6 +9,7 @@ import registerani from "../animation/register.json";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "next-themes";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const Register = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+  const { theme } = useTheme();
   const validatePassword = (password) => {
     const hasUppercase = /[A-Z]/.test(password);
     const hasLowercase = /[a-z]/.test(password);
@@ -119,7 +120,13 @@ const Register = () => {
     }
   };
   return (
-    <div className="flex flex-col max-w-screen-xl mx-auto lg:flex-row items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-4">
+    <div
+      className={` flex rounded-lg mt-10 max-w-screen-xl mx-auto flex-col lg:flex-row items-center justify-center min-h-screen  p-4 ${
+        theme === "light"
+          ? "bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400"
+          : " bg-gray-800"
+      }`}
+    >
       <Helmet>
         <title>Buildinghub | Register</title>
       </Helmet>
@@ -134,7 +141,13 @@ const Register = () => {
       </div>
 
       {/* Form Section */}
-      <div className="w-full lg:w-1/2 max-w-md p-6 bg-white rounded-lg shadow-lg">
+      <div
+        className={`w-full lg:w-1/2 max-w-md p-6  rounded-lg shadow-lg ${
+          theme === "light"
+            ? "bg-white"
+            : "bg-gray-800 border-2 border-t-2 border-b-2 border-gray-700"
+        }`}
+      >
         <h2 className="text-3xl font-bold text-center text-gray-700">
           Create an Account
         </h2>

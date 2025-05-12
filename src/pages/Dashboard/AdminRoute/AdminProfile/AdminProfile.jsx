@@ -5,10 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import { FaSpinner } from "react-icons/fa";
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "next-themes";
 
 const AdminProfile = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
+  const { theme } = useTheme();
   const axiosSecure = useAxiosSecure();
 
   const { data: allUsers = [], isLoading: usersLoading } = useQuery({
@@ -57,7 +59,11 @@ const AdminProfile = () => {
       <Helmet>
         <title>Buildinghub | Admin</title>
       </Helmet>
-      <div className="flex flex-col md:flex-row items-center bg-white p-6 rounded-lg shadow-md">
+      <div
+        className={`flex flex-col md:flex-row items-center  p-6 rounded-lg shadow-md ${
+          theme === "light" ? "bg-white" : "bg-gray-800"
+        }`}
+      >
         <div className="flex justify-center md:justify-start mb-4 md:mb-0">
           <img
             src={user?.photoURL}
@@ -67,17 +73,37 @@ const AdminProfile = () => {
         </div>
 
         <div className="md:ml-8 text-center md:text-left">
-          <h1 className="text-3xl font-semibold text-gray-800">
+          <h1
+            className={`text-3xl font-semibold ${
+              theme === "light" ? "text-gray-800" : "to-white"
+            }`}
+          >
             {user?.displayName}
           </h1>
-          <p className="text-gray-500">{user?.email}</p>
+          <p
+            className={` font-semibold ${
+              theme === "light" ? "text-gray-800" : "to-white"
+            }`}
+          >
+            {user?.email}
+          </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
         {/* Total Rooms */}
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
-          <h3 className="text-xl font-semibold text-gray-700">Total Rooms</h3>
+        <div
+          className={` p-6 rounded-lg shadow-md text-center ${
+            theme === "light" ? "bg-gray-100" : "bg-gray-800"
+          }`}
+        >
+          <h3
+            className={`text-xl font-semibold text-gray-700 ${
+              theme === "light" ? "text-gray-700" : "text-white"
+            }`}
+          >
+            Total Rooms
+          </h3>
           {apartmentsLoading ? (
             <FaSpinner className="animate-spin text-3xl text-blue-500 mx-auto" />
           ) : (
@@ -88,8 +114,16 @@ const AdminProfile = () => {
         </div>
 
         {/* Available Rooms */}
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
-          <h3 className="text-xl font-semibold text-gray-700">
+        <div
+          className={` p-6 rounded-lg shadow-md text-center ${
+            theme === "light" ? "bg-gray-100" : "bg-gray-800"
+          }`}
+        >
+          <h3
+            className={`text-xl font-semibold text-gray-700 ${
+              theme === "light" ? "text-gray-700" : "text-white"
+            }`}
+          >
             Available Rooms
           </h3>
           {apartmentsLoading || bookedRoomsLoading ? (
@@ -107,8 +141,16 @@ const AdminProfile = () => {
         </div>
 
         {/* Unavailable Rooms */}
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
-          <h3 className="text-xl font-semibold text-gray-700">
+        <div
+          className={` p-6 rounded-lg shadow-md text-center ${
+            theme === "light" ? "bg-gray-100" : "bg-gray-800"
+          }`}
+        >
+          <h3
+            className={`text-xl font-semibold text-gray-700 ${
+              theme === "light" ? "text-gray-700" : "text-white"
+            }`}
+          >
             Unavailable Rooms
           </h3>
           {bookedRoomsLoading ? (
@@ -126,8 +168,16 @@ const AdminProfile = () => {
         </div>
 
         {/* Users */}
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
-          <h3 className="text-xl font-semibold text-gray-700">
+        <div
+          className={` p-6 rounded-lg shadow-md text-center ${
+            theme === "light" ? "bg-gray-100" : "bg-gray-800"
+          }`}
+        >
+          <h3
+            className={`text-xl font-semibold text-gray-700 ${
+              theme === "light" ? "text-gray-700" : "text-white"
+            }`}
+          >
             Users in Database
           </h3>
           {usersLoading ? (
@@ -140,8 +190,16 @@ const AdminProfile = () => {
         </div>
 
         {/* Members */}
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
-          <h3 className="text-xl font-semibold text-gray-700">
+        <div
+          className={` p-6 rounded-lg shadow-md text-center ${
+            theme === "light" ? "bg-gray-100" : "bg-gray-800"
+          }`}
+        >
+          <h3
+            className={`text-xl font-semibold text-gray-700 ${
+              theme === "light" ? "text-gray-700" : "text-white"
+            }`}
+          >
             Members in Database
           </h3>
           {membersLoading ? (

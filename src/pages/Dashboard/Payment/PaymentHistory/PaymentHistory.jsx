@@ -4,12 +4,14 @@ import useAuth from "../../../../hooks/useAuth";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import { FaSpinner } from "react-icons/fa";
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "next-themes";
 
 const PaymentHistory = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [loading, setLoading] = useState(true);
   const [paymentHistory, setPaymentHistory] = useState([]);
+  const { theme } = useTheme();
   const email = user?.email;
 
   useEffect(() => {
@@ -45,19 +47,43 @@ const PaymentHistory = () => {
       <h2 className="text-2xl font-bold mb-4">Payment History</h2>
       {paymentHistory.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white rounded-lg shadow-md">
+          <table
+            className={`min-w-full  rounded-lg shadow-md ${
+              theme === "light" ? "bg-white" : "bg-gray-800"
+            }`}
+          >
             <thead>
-              <tr className="bg-gray-100">
-                <th className="text-left p-4 text-gray-700 font-semibold">
+              <tr
+                className={` ${
+                  theme === "light" ? "bg-gray-100" : "bg-gray-800"
+                }`}
+              >
+                <th
+                  className={`text-left p-4  font-semibold ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
+                >
                   Email
                 </th>{" "}
-                <th className="text-left p-4 text-gray-700 font-semibold">
+                <th
+                  className={`text-left p-4  font-semibold ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
+                >
                   Date
                 </th>
-                <th className="text-left p-4 text-gray-700 font-semibold">
+                <th
+                  className={`text-left p-4  font-semibold ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
+                >
                   Rent
                 </th>
-                <th className="text-left p-4 text-gray-700 font-semibold">
+                <th
+                  className={`text-left p-4  font-semibold ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
+                >
                   Payment ID
                 </th>
               </tr>
@@ -65,12 +91,32 @@ const PaymentHistory = () => {
             <tbody>
               {paymentHistory.map((payment) => (
                 <tr key={payment._id} className="border-b">
-                  <td className="p-4 text-gray-800">{payment.email}</td>
-                  <td className="p-4 text-gray-800">
+                  <td
+                    className={`p-4  ${
+                      theme === "light" ? "text-gray-800" : "text-white"
+                    }`}
+                  >
+                    {payment.email}
+                  </td>
+                  <td
+                    className={`p-4  ${
+                      theme === "light" ? "text-gray-800" : "text-white"
+                    }`}
+                  >
                     {new Date(payment.date).toLocaleDateString()}
                   </td>
-                  <td className="p-4 text-gray-800">${payment.rent}</td>
-                  <td className="p-4 text-gray-800">
+                  <td
+                    className={`p-4  ${
+                      theme === "light" ? "text-gray-800" : "text-white"
+                    }`}
+                  >
+                    ${payment.rent}
+                  </td>
+                  <td
+                    className={`p-4  ${
+                      theme === "light" ? "text-gray-800" : "text-white"
+                    }`}
+                  >
                     {payment.paymentIntentId}
                   </td>
                 </tr>

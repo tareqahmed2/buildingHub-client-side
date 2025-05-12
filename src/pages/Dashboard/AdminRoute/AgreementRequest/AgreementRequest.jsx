@@ -6,8 +6,10 @@ import { useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "next-themes";
 const AgreementRequest = () => {
   const axiosSecure = useAxiosSecure();
+  const { theme } = useTheme();
   const { user } = useAuth();
   const {
     data: agreementRequest = [],
@@ -125,11 +127,19 @@ const AgreementRequest = () => {
     );
   }
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg">
+    <div
+      className={` shadow-lg rounded-lg ${
+        theme === "light" ? "bg-white" : "bg-gray-800"
+      }`}
+    >
       <Helmet>
         <title>Buildinghub | Agreement Request</title>
       </Helmet>
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+      <h2
+        className={`p-4 text-2xl font-semibold  mb-4  ${
+          theme === "light" ? "text-gray-800" : "text-white"
+        }`}
+      >
         Agreement Requests ({agreementRequest.length})
       </h2>
       <div className="overflow-x-auto">
@@ -159,10 +169,10 @@ const AgreementRequest = () => {
                   request._id % 2 === 0 ? "bg-red-500" : "bg-purple-200"
                 }`} // Alternating row colors
               >
-                <td className="pl-3 py-4 border-b border-r font-semibold text-gray-700 whitespace-nowrap">
+                <td className="pl-3 py-4 border-b border-r font-semibold text-gray-700 ">
                   {request.userName}
                 </td>
-                <td className="px-2  py-4 border-b border-r text-gray-600 whitespace-nowrap">
+                <td className="px-2  py-4 border-b border-r text-gray-600 ">
                   {request.userEmail}
                 </td>
                 <td className="px-2 py-4 border-b border-r text-gray-600 whitespace-nowrap">
@@ -191,14 +201,14 @@ const AgreementRequest = () => {
                           handleAccept(request.userEmail, request._id)
                         }
                         title="Accept"
-                        className="flex items-center justify-center text-green-600 hover:bg-green-100 p-2 rounded-lg transition duration-300"
+                        className="flex items-center justify-center text-green-600 hover:bg-green-100  rounded-lg transition duration-300"
                       >
                         <FaCheck size={22} />
                       </button>
                       <button
                         onClick={() => handleReject(request._id)}
                         title="Reject"
-                        className="flex items-center justify-center text-red-600 hover:bg-red-100 p-2 rounded-lg transition duration-300"
+                        className="flex items-center justify-center text-red-600 hover:bg-red-100  rounded-lg transition duration-300"
                       >
                         <FaTimes size={22} />
                       </button>

@@ -15,6 +15,8 @@ import {
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import useAuth from "../../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "next-themes";
+import Theme from "../../global/Theme";
 
 const Dashboard = () => {
   const axiosPublic = useAxiosPublic();
@@ -22,7 +24,9 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme } = useTheme();
   const [userFromCollection, setUserFromCollection] = useState([]);
+
   useEffect(() => {
     axiosPublic.get(`/all-users/${user?.email}`).then((res) => {
       setUserFromCollection(res.data);
@@ -50,7 +54,11 @@ const Dashboard = () => {
     );
   }
   return (
-    <div className="flex flex-col lg:flex-row max-w-screen-xl mx-auto min-h-screen bg-gray-50">
+    <div
+      className={`flex flex-col lg:flex-row max-w-screen-xl mx-auto min-h-screen  ${
+        theme === "light" ? "bg-gray-50" : "bg-gray-800"
+      }`}
+    >
       <Helmet>
         <title>Buildinghub | Dashboard</title>
       </Helmet>
@@ -59,7 +67,11 @@ const Dashboard = () => {
         <div className="mb-8 text-center">
           {/* <h2 className="text-2xl font-bold">User Dashboard</h2> */}
         </div>
+
         <nav>
+          <span className="mx-2 my-4">
+            <Theme></Theme>
+          </span>
           <ul className="space-y-6">
             <li>
               <NavLink
@@ -205,7 +217,11 @@ const Dashboard = () => {
         </nav>
       </aside>
 
-      <main className="flex-grow bg-white p-6 lg:p-10 rounded-tl-lg shadow-md">
+      <main
+        className={`flex-grow  p-6 lg:p-10 rounded-tl-lg shadow-md ${
+          theme === "light" ? "bg-white" : "bg-gray-800"
+        }`}
+      >
         <Outlet />
       </main>
     </div>

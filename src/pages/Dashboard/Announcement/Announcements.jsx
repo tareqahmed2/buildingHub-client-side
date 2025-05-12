@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import { FaSpinner } from "react-icons/fa";
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "next-themes";
 
 const Announcements = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { theme } = useTheme();
 
   const axiosPublic = useAxiosPublic();
 
@@ -44,11 +46,23 @@ const Announcements = () => {
         {announcements.map((announcement, index) => (
           <div
             key={index}
-            className="announcement-item bg-white p-4 mb-4 rounded-lg shadow-md"
+            className={`announcement-item  p-4 mb-4 rounded-lg shadow-md ${
+              theme === "light" ? "bg-white" : "bg-gray-800"
+            }`}
           >
             <h3 className="text-xl font-semibold">{announcement.title}</h3>
-            <p className="text-gray-600">{announcement.description}</p>
-            <p className="text-gray-400 text-sm mt-2">
+            <p
+              className={` ${
+                theme === "light" ? "text-gray-600" : "text-white"
+              }`}
+            >
+              {announcement.description}
+            </p>
+            <p
+              className={` ${
+                theme === "font-light" ? "text-gray-600" : "text-white"
+              }`}
+            >
               {new Date(announcement.createdAt).toLocaleDateString()}
             </p>
           </div>

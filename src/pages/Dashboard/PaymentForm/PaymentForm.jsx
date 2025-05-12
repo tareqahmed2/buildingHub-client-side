@@ -6,6 +6,7 @@ import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { FaSpinner } from "react-icons/fa";
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "next-themes";
 
 const PaymentForm = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const PaymentForm = () => {
   const [appliedRent, setAppliedRent] = useState(null);
   const [showError, setShowError] = useState(true);
   const [couponError, setCouponError] = useState(true);
+  const { theme } = useTheme();
   const [isCouponUsedModalOpen, setIsCouponUsedModalOpen] = useState(false); // Modal state
 
   const axiosPublic = useAxiosPublic();
@@ -98,7 +100,11 @@ const PaymentForm = () => {
     );
   }
   return (
-    <div className="p-6 max-w-lg mx-auto bg-white rounded shadow">
+    <div
+      className={`p-6 max-w-lg mx-auto  rounded shadow ${
+        theme === "light" ? "bg-white" : "bg-gray-800"
+      }`}
+    >
       <Helmet>
         <title>Buildinghub | Payment-form</title>
       </Helmet>
@@ -111,54 +117,100 @@ const PaymentForm = () => {
           </>
         )} */}
         <div className="mb-4">
-          <label className="block text-gray-700">Member Email</label>
+          <label
+            className={`block  ${
+              theme === "light" ? "text-gray-700" : "text-white"
+            }`}
+          >
+            Member Email
+          </label>
           <input
             type="email"
             readOnly
             value={agreement.userEmail || ""}
-            className="w-full p-2 border rounded bg-gray-100"
+            className={`w-full p-2 border rounded  ${
+              theme === "light" ? "bg-gray-100" : "bg-gray-600"
+            }`}
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700">Floor</label>
+          <label
+            className={`block  ${
+              theme === "light" ? "text-gray-700" : "text-white"
+            }`}
+          >
+            Floor
+          </label>
           <input
             type="text"
             readOnly
             value={agreement.floor || ""}
-            className="w-full p-2 border rounded bg-gray-100"
+            className={`w-full p-2 border rounded  ${
+              theme === "light" ? "bg-gray-100" : "bg-gray-600"
+            }`}
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700">Block Name</label>
+          <label
+            className={`block  ${
+              theme === "light" ? "text-gray-700" : "text-white"
+            }`}
+          >
+            Block Name
+          </label>
           <input
             type="text"
             readOnly
             value={agreement.block || ""}
-            className="w-full p-2 border rounded bg-gray-100"
+            className={`w-full p-2 border rounded  ${
+              theme === "light" ? "bg-gray-100" : "bg-gray-600"
+            }`}
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700">Apartment No/Room No</label>
+          <label
+            className={`block  ${
+              theme === "light" ? "text-gray-700" : "text-white"
+            }`}
+          >
+            Apartment No/Room No
+          </label>
           <input
             type="text"
             readOnly
             value={agreement.aptNo || ""}
-            className="w-full p-2 border rounded bg-gray-100"
+            className={`w-full p-2 border rounded  ${
+              theme === "light" ? "bg-gray-100" : "bg-gray-600"
+            }`}
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700">Rent</label>
+          <label
+            className={`block  ${
+              theme === "light" ? "text-gray-700" : "text-white"
+            }`}
+          >
+            Rent
+          </label>
           <input
             type="text"
             readOnly
             value={`$${appliedRent || agreement.rent}`}
-            className="w-full p-2 border rounded bg-gray-100"
+            className={`w-full p-2 border rounded  ${
+              theme === "light" ? "bg-gray-100" : "bg-gray-600"
+            }`}
           />
         </div>
 
         {/* Month Selection */}
         <div className="mb-4">
-          <label className="block text-gray-700">Month</label>
+          <label
+            className={`block  ${
+              theme === "light" ? "text-gray-700" : "text-white"
+            }`}
+          >
+            Month
+          </label>
           <select
             required
             onChange={(e) => {
@@ -196,7 +248,13 @@ const PaymentForm = () => {
             </span>
           )}
 
-          <label className="block text-gray-700">Coupon Code</label>
+          <label
+            className={`block  ${
+              theme === "light" ? "text-gray-700" : "text-white"
+            }`}
+          >
+            Coupon Code
+          </label>
           <input
             type="text"
             value={coupon}

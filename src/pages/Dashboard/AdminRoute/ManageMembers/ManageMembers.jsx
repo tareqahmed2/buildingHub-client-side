@@ -5,11 +5,13 @@ import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "next-themes";
 
 const ManageMembers = () => {
   const [loading, setLoading] = useState(false);
   const axiosSecure = useAxiosSecure();
   const axiosPublic = useAxiosPublic();
+  const { theme } = useTheme();
 
   // Query to fetch all members
   const {
@@ -97,7 +99,7 @@ const ManageMembers = () => {
               <th className="px-6 py-3 text-left">Role</th>
               <th className="px-6 py-3 text-left">Floor</th>
               <th className="px-6 py-3 text-left">Block</th>
-              <th className="px-6 py-3 text-left">Apt No</th>
+              <th className="px-6 py-3 text-left whitespace-nowrap">Apt No</th>
               <th className="px-6 py-3 text-left">Action</th>
             </tr>
           </thead>

@@ -7,13 +7,14 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "next-themes";
 
 const Apartment = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const [userFromCollection, setUserFromCollection] = useState([]);
-
+  const { theme } = useTheme();
   const [apartments, setApartments] = useState([]);
   const axiosPublic = useAxiosPublic();
   axiosPublic
@@ -118,7 +119,11 @@ const Apartment = () => {
         <title>Buildinghub | Apartments</title>
       </Helmet>
       <div className="mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-4">
+        <h2
+          className={`text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-4 ${
+            theme === "light" ? "text-gray-800" : "text-white"
+          }`}
+        >
           Available Apartments
         </h2>
         <div className="flex flex-wrap justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-4">
@@ -158,19 +163,41 @@ const Apartment = () => {
         {filteredApartments.map((apartment) => (
           <div
             key={apartment._id}
-            className="bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition-all"
+            className={` p-4 rounded-lg shadow-lg hover:shadow-xl transition-all ${
+              theme === "light" ? "bg-white" : "bg-gray-800"
+            }`}
           >
             <img
               src={apartment.image}
               alt={`Apartment ${apartment.aptNo}`}
               className="w-full h-40 object-cover rounded-md mb-4"
             />
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-700">
+            <h3
+              className={`text-lg sm:text-xl font-semibold text-gray-700 ${
+                theme === "light" ? "text-gray-700" : "text-white"
+              }`}
+            >
               Apartment No: {apartment.aptNo}
             </h3>
-            <p className="text-sm text-gray-500">Floor: {apartment.floor}</p>
-            <p className="text-sm text-gray-500">Block: {apartment.block}</p>
-            <p className="text-base sm:text-lg font-bold text-gray-900">
+            <p
+              className={` ${
+                theme === "light" ? "text-gray-600" : "text-white"
+              }`}
+            >
+              Floor: {apartment.floor}
+            </p>
+            <p
+              className={` ${
+                theme === "light" ? "text-gray-600" : "text-white"
+              }`}
+            >
+              Block: {apartment.block}
+            </p>
+            <p
+              className={`text-base sm:text-lg font-bold  ${
+                theme === "light" ? "text-gray-900" : "text-white"
+              }`}
+            >
               Rent: {apartment.rent} TK
             </p>
             <button

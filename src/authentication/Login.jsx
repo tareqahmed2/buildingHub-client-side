@@ -8,6 +8,7 @@ import loginani from "../animation/login.json";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "next-themes";
 const Login = () => {
   const { signInWithGoogle, signInWithEmailPassword } = useAuth();
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false); // State for password toggling
   const [error, setError] = useState("");
-
+  const { theme } = useTheme();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -36,8 +37,8 @@ const Login = () => {
   };
 
   const demoMemberLogin = async () => {
-    const email = "tareqahmed347396@gmail.com";
-    const pass = "Tareq123";
+    const email = "elonMask@gmail.com";
+    const pass = "MaskVai";
     try {
       await signInWithEmailPassword(email, pass);
       navigate("/", { replace: true });
@@ -89,7 +90,13 @@ const Login = () => {
   };
 
   return (
-    <div className="flex rounded-lg mt-10 max-w-screen-xl mx-auto flex-col lg:flex-row items-center justify-center min-h-screen bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400 p-4">
+    <div
+      className={` flex rounded-lg mt-10 max-w-screen-xl mx-auto flex-col lg:flex-row items-center justify-center min-h-screen  p-4 ${
+        theme === "light"
+          ? "bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400"
+          : " bg-gray-800"
+      }`}
+    >
       <Helmet>
         <title>Buildinghub | Login</title>
       </Helmet>
@@ -102,7 +109,11 @@ const Login = () => {
         />
       </div>
 
-      <div className="w-full lg:w-1/2 max-w-md p-6 bg-white rounded-lg shadow-lg">
+      <div
+        className={`w-full lg:w-1/2 max-w-md p-6  rounded-lg shadow-lg ${
+          theme === "light" ? "bg-white" : "bg-gray-800"
+        }`}
+      >
         <h2 className="text-3xl font-bold text-center text-gray-700">
           Welcome Back
         </h2>

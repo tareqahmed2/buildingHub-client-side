@@ -7,11 +7,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import { FaEdit } from "react-icons/fa";
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "next-themes";
 
 const ManageCoupons = () => {
   const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
+  const { theme } = useTheme();
   const [newCoupon, setNewCoupon] = useState({
     code: "",
     description: "",
@@ -155,31 +157,69 @@ const ManageCoupons = () => {
             <span className="loading loading-spinner loading-lg text-blue-500"></span>
           </div>
         ) : (
-          <table className="min-w-full bg-white rounded-lg shadow-md">
+          <table
+            className={`min-w-full  rounded-lg shadow-md ${
+              theme === "light" ? "bg-white" : "bg-gray-800"
+            }`}
+          >
             <Helmet>
               <title>Buildinghub | Manage-coupons</title>
             </Helmet>
             <thead>
-              <tr className="bg-gray-100">
-                <th className="text-left p-4 text-gray-700 font-semibold whitespace-nowrap">
+              <tr
+                className={` ${
+                  theme === "light"
+                    ? " bg-gray-100 text-gray-700"
+                    : "bg-gray-800 text-white"
+                }`}
+              >
+                <th
+                  className={`text-left p-4  font-semibold whitespace-nowrap ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
+                >
                   Coupon Code
                 </th>
-                <th className="text-left p-4 text-gray-700 font-semibold whitespace-nowrap">
+                <th
+                  className={`text-left p-4  font-semibold whitespace-nowrap ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
+                >
                   Description
                 </th>
-                <th className="text-left p-4 text-gray-700 font-semibold">
+                <th
+                  className={`text-left p-4  font-semibold whitespace-nowrap ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
+                >
                   Expiry Date
                 </th>
-                <th className="text-left p-4 text-gray-700 font-semibold whitespace-nowrap">
+                <th
+                  className={`text-left p-4  font-semibold whitespace-nowrap ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
+                >
                   Discount (%)
                 </th>
-                <th className="text-left p-4 text-gray-700 font-semibold whitespace-nowrap">
+                <th
+                  className={`text-left p-4  font-semibold whitespace-nowrap ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
+                >
                   All Properties
                 </th>
-                <th className="text-left p-4 text-gray-700 font-semibold">
+                <th
+                  className={`text-left p-4  font-semibold whitespace-nowrap ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
+                >
                   Availability
                 </th>
-                <th className="text-left p-4 text-gray-700 font-semibold">
+                <th
+                  className={`text-left p-4  font-semibold whitespace-nowrap ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
+                >
                   Action
                 </th>
               </tr>
@@ -190,21 +230,49 @@ const ManageCoupons = () => {
                   <tr
                     key={index}
                     className={`border-b ${
-                      index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                      theme === "light" ? "bg-gray-100" : "bg-gray-800"
                     }`}
                   >
-                    <td className="p-4 text-gray-800">{coupon?.code}</td>
-                    <td className="p-4 text-gray-800">{coupon?.description}</td>
-                    <td className="p-4 text-gray-800 whitespace-nowrap">
+                    <td
+                      className={`p-4 ${
+                        theme === "light" ? "text-gray-800" : "text-white"
+                      }`}
+                    >
+                      {coupon?.code}
+                    </td>
+                    <td
+                      className={`p-4 ${
+                        theme === "light" ? "text-gray-800" : "text-white"
+                      }`}
+                    >
+                      {coupon?.description}
+                    </td>
+                    <td
+                      className={`p-4  whitespace-nowrap ${
+                        theme === "light" ? "text-gray-800" : "text-white"
+                      }`}
+                    >
                       {coupon?.expiryDate}
                     </td>
-                    <td className="p-4 text-gray-800">
+                    <td
+                      className={`p-4 ${
+                        theme === "light" ? "text-gray-800" : "text-white"
+                      }`}
+                    >
                       {coupon?.discountPercentage}%
                     </td>
-                    <td className="p-4 text-gray-800">
+                    <td
+                      className={`p-4 ${
+                        theme === "light" ? "text-gray-800" : "text-white"
+                      }`}
+                    >
                       {coupon?.allProperties ? "Yes" : "No"}
                     </td>
-                    <td className="p-4 text-gray-800">
+                    <td
+                      className={`p-4 ${
+                        theme === "light" ? "text-gray-800" : "text-white"
+                      }`}
+                    >
                       {coupon?.availability ? (
                         <span className="text-green-500 font-semibold">
                           Yes
@@ -214,7 +282,11 @@ const ManageCoupons = () => {
                       )}
                     </td>
 
-                    <td className="p-4 text-gray-800">
+                    <td
+                      className={`p-4 ${
+                        theme === "light" ? "text-gray-800" : "text-white"
+                      }`}
+                    >
                       <button
                         className="bg-yellow-500 text-white py-1 px-3 rounded-lg hover:bg-yellow-600 transition duration-300"
                         onClick={() => handleEdit(coupon)}
@@ -242,13 +314,19 @@ const ManageCoupons = () => {
       {/* Add Coupon Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-11/12 max-w-md">
+          <div
+            className={` rounded-lg shadow-lg p-6 w-11/12 max-w-md ${
+              theme === "light" ? "bg-white" : "bg-gray-800"
+            }`}
+          >
             <h2 className="text-xl font-bold mb-4">Add New Coupon</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label
                   htmlFor="code"
-                  className="block text-sm font-semibold text-gray-700 mb-1"
+                  className={` whitespace-nowrap ${
+                    theme === "light" ? "text-gray-800" : "text-white"
+                  }`}
                 >
                   Coupon Code
                 </label>
@@ -266,7 +344,9 @@ const ManageCoupons = () => {
               <div className="mb-4">
                 <label
                   htmlFor="description"
-                  className="block text-sm font-semibold text-gray-700 mb-1"
+                  className={` whitespace-nowrap ${
+                    theme === "light" ? "text-gray-800" : "text-white"
+                  }`}
                 >
                   Description
                 </label>
@@ -284,7 +364,9 @@ const ManageCoupons = () => {
               <div className="mb-4">
                 <label
                   htmlFor="expiryDate"
-                  className="block text-sm font-semibold text-gray-700 mb-1"
+                  className={`block text-sm font-semibold  mb-1 ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
                 >
                   Expiry Date
                 </label>
@@ -338,7 +420,7 @@ const ManageCoupons = () => {
               <div className="flex justify-end space-x-4">
                 <button
                   type="button"
-                  className="py-2 px-4 bg-gray-300 rounded-lg hover:bg-gray-400 transition duration-300"
+                  className="py-2 px-4 bg-gray-600 rounded-lg hover:bg-pink-600 transition duration-300"
                   onClick={() => setShowModal(false)}
                 >
                   Cancel
@@ -384,7 +466,9 @@ const ManageCoupons = () => {
               <div className="mb-4">
                 <label
                   htmlFor="editAvailability"
-                  className="block text-sm font-semibold text-gray-700 mb-1"
+                  className={`block text-sm font-semibold  mb-1 ${
+                    theme === "light" ? "text-gray-700" : "text-white"
+                  }`}
                 >
                   Availability
                 </label>

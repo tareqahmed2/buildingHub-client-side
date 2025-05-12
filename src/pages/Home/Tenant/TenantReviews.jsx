@@ -1,8 +1,10 @@
 // src/components/sections/TenantReviews.js
 import React from "react";
 import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
 
 const TenantReviews = () => {
+  const { theme } = useTheme();
   // Dummy reviews; replace with dynamic data as needed
   const reviews = [
     {
@@ -48,10 +50,18 @@ const TenantReviews = () => {
   };
 
   return (
-    <section id="reviews" className="">
-      <div className="max-w-screen-xl mx-auto px-4  bg-gradient-to-r from-blue-100 to-blue-50 py-10 rounded-lg">
+    <section id="reviews" className="px-5">
+      <div
+        className={`max-w-screen-xl mx-auto px-4  rounded-lg py-10  ${
+          theme === "light"
+            ? " bg-gradient-to-r from-blue-100 to-blue-50 "
+            : "bg-gray-800"
+        }`}
+      >
         <motion.h2
-          className="text-3xl font-bold text-center mb-10"
+          className={`text-3xl font-bold text-center mb-10 ${
+            theme === "light" ? "text-gray-800" : "text-white"
+          }`}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -64,10 +74,15 @@ const TenantReviews = () => {
           initial="hidden"
           animate="visible"
         >
+          {/*  */}
           {reviews.map((item) => (
             <motion.div
               key={item.id}
-              className="bg-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
+              className={` p-6 border-t-2  border-b-2 border-gray-500 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 ${
+                theme === "light"
+                  ? "bg-white text-gray-800"
+                  : "bg-gray-800 text-white"
+              }`}
               variants={reviewVariants}
               whileHover={{ scale: 1.05 }}
             >
@@ -80,7 +95,13 @@ const TenantReviews = () => {
                 </div>
                 <h3 className="font-semibold text-xl">{item.name}</h3>
               </div>
-              <p className="text-gray-700">{item.review}</p>
+              <p
+                className={` ${
+                  theme === "light" ? "text-gray-700" : "text-white"
+                }`}
+              >
+                {item.review}
+              </p>
             </motion.div>
           ))}
         </motion.div>

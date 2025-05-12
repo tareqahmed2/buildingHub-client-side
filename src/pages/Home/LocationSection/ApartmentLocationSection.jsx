@@ -1,11 +1,18 @@
+import { useTheme } from "next-themes";
+
 const ApartmentLocationSection = () => {
+  const { theme } = useTheme();
   return (
     <section className="py-16 px-6">
       <div className="max-w-screen-xl mx-auto text-center">
         <h2 className="text-4xl font-bold text-blue-700 mb-8">
           Apartment Location
         </h2>
-        <p className="text-lg text-gray-700 mb-12">
+        <p
+          className={`text-lg  mb-12 ${
+            theme === "light" ? "text-gray-700" : "text-white"
+          }`}
+        >
           Find us easily! Here’s the exact location of our apartments and how to
           get there.
         </p>
@@ -23,11 +30,19 @@ const ApartmentLocationSection = () => {
             />
           </div>
 
-          <div className="bg-white p-8 rounded-lg shadow-xl">
+          <div
+            className={` p-8 rounded-lg shadow-xl ${
+              theme === "light" ? "bg-white text-gray-800" : "  bg-gray-7800"
+            }`}
+          >
             <h3 className="text-2xl font-semibold text-blue-600 mb-4">
               How to Get There
             </h3>
-            <ul className="text-lg text-gray-600">
+            <ul
+              className={`text-lg  ${
+                theme === "light" ? "text-gray-700" : "text-white"
+              }`}
+            >
               <li>Take a left turn at the Eastern University gate.</li>
               <li>Walk straight for 100 meters.</li>
               <li>

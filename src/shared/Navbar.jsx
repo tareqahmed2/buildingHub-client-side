@@ -4,13 +4,15 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.webp";
 import { NavLink } from "react-router-dom";
 import HamburgerMenu from "react-hamburger-menu"; // Import the React Hamburger Menu
+import Theme from "../global/Theme";
+import { useTheme } from "next-themes";
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hamburgerOpen, setHamburgerOpen] = useState(false); // State for hamburger menu
   const { user, loading, signOutUser } = useAuth();
   const navigate = useNavigate();
-
+  const { theme } = useTheme();
   const links = (
     <>
       <li>
@@ -47,7 +49,11 @@ const Navbar = () => {
   );
 
   return (
-    <div className="bg-white shadow-lg sticky top-0 z-50">
+    <div
+      className={` shadow-lg sticky top-0 z-50 ${
+        theme === "light" ? "bg-white" : "bg-gray-800"
+      }`}
+    >
       <div className="navbar max-w-screen-xl mx-auto">
         <div className="navbar-start">
           <img
@@ -56,7 +62,12 @@ const Navbar = () => {
             className="h-12 w-12 rounded-full cursor-pointer border-2 hidden md:block"
             onClick={() => navigate("/")}
           />
-          <a href="/" className="ml-2 text-xl font-bold">
+          <a
+            href="/"
+            className={`ml-2  text-xl font-bold ${
+              theme === "light" ? "text-gray-800" : "text-white"
+            }`}
+          >
             BuildingHub
           </a>
         </div>
@@ -67,7 +78,11 @@ const Navbar = () => {
         </div>
 
         {/* Hamburger menu for mobile */}
-        <div className="navbar-end lg:hidden bg-white">
+        <div
+          className={`navbar-end lg:hidden mr-3 ${
+            theme === "light" ? "bg-white" : "bg-gray-600"
+          }`}
+        >
           <HamburgerMenu
             isOpen={hamburgerOpen}
             menuClicked={() => setHamburgerOpen(!hamburgerOpen)}
@@ -91,16 +106,27 @@ const Navbar = () => {
           {loading ? (
             <span className="loading-spinner">Loading...</span>
           ) : user ? (
-            <div className="relative">
-              <img
-                src={user?.photoURL}
-                alt="Profile"
-                className="h-10 w-10 rounded-full cursor-pointer border-2 border-blue-500"
-                onClick={() => setDropdownOpen((prev) => !prev)}
-              />
+            <div className="relative ">
+              <div className="flex items-center">
+                <div className="mr-3">
+                  <Theme></Theme>
+                </div>
+                <img
+                  src={user?.photoURL}
+                  alt="Profile"
+                  className="h-10 w-10 rounded-full cursor-pointer border-2 border-blue-500"
+                  onClick={() => setDropdownOpen((prev) => !prev)}
+                />
+              </div>
 
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white text-gray-700 rounded-lg shadow-lg z-20">
+                <div
+                  className={`absolute right-0 mt-2 w-48  ${
+                    theme === "light"
+                      ? "bg-white text-gray-700 "
+                      : "text-white bg-[#374151]"
+                  } rounded-lg shadow-lg z-20`}
+                >
                   <div className="p-4 border-b">
                     <p className="font-semibold">{user?.displayName}</p>
                   </div>
@@ -108,15 +134,16 @@ const Navbar = () => {
                     <li>
                       <Link
                         to="/dashboard"
-                        className="block px-4 py-2 hover:bg-gray-100"
+                        className="block px-4 py-2 hover:underline"
                       >
                         Dashboard
                       </Link>
                     </li>
+
                     <li>
                       <button
                         onClick={signOutUser}
-                        className="block px-4 py-2 text-left w-full hover:bg-gray-100"
+                        className="block px-4 py-2 text-left w-full hover:underline"
                       >
                         Logout
                       </button>
@@ -126,12 +153,17 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <a
-              href="/login"
-              className="btn btn-primary text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
-            >
-              Login
-            </a>
+            <div className="flex items-center">
+              <div className="mr-3">
+                <Theme></Theme>
+              </div>
+              <a
+                href="/login"
+                className="btn btn-primary text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
+              >
+                Login
+              </a>
+            </div>
           )}
         </div>
       </div>

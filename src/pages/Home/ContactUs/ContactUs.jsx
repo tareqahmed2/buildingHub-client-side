@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
 import contactAnimation from "../../../animation/contactani.json";
+import { useTheme } from "next-themes";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const ContactUs = () => {
     email: "",
     message: "",
   });
+  const { theme } = useTheme();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,8 +27,12 @@ const ContactUs = () => {
   };
 
   return (
-    <section id="contact-us" className="py-10 ">
-      <div className="max-w-screen-xl mx-auto px-4 flex flex-col md:flex-row items-center gap-8 bg-gray-50 rounded-lg">
+    <section className="py-5  px-5">
+      <div
+        className={`max-w-screen-xl mx-auto py-5 px-4 flex flex-col md:flex-row items-center gap-8  rounded-lg ${
+          theme === "light" ? "bg-gray-50" : "bg-gray-800"
+        }`}
+      >
         {/* Lottie Animation */}
         <motion.div
           className="w-full md:w-1/2"

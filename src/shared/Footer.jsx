@@ -1,9 +1,15 @@
+import { useTheme } from "next-themes";
 import React from "react";
 import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from "react-icons/fa";
 
 const Footer = () => {
+  const { theme } = useTheme();
   return (
-    <footer className="bg-gray-800 text-white py-8 mt-8">
+    <footer
+      className={`  py-8 mt-8 ${
+        theme === "light" ? "text-gray-800 bg-white" : "text-white bg-gray-800"
+      }`}
+    >
       <div className="max-w-screen-xl mx-auto text-center px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">

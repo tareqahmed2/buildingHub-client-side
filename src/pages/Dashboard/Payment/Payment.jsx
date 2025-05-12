@@ -11,6 +11,7 @@ import useAuth from "../../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "next-themes";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
 const axiosPublic = useAxiosPublic();
@@ -44,6 +45,7 @@ const PaymentForm = () => {
   const [coupon, setCoupon] = useState("");
   const [appliedRent, setAppliedRent] = useState(null);
   const { user } = useAuth();
+  const { theme } = useTheme();
 
   const {
     data: agreementData,
@@ -136,7 +138,11 @@ const PaymentForm = () => {
   };
 
   return (
-    <div className="p-6 max-w-lg mx-auto bg-white rounded shadow">
+    <div
+      className={`p-6 max-w-lg mx-auto e rounded shadow ${
+        theme === "light" ? "bg-white" : "bg-gray-800"
+      }`}
+    >
       <Helmet>
         <title>Buildinghub | Payment</title>
       </Helmet>
@@ -159,7 +165,13 @@ const PaymentForm = () => {
           <h2 className="text-xl font-bold mb-4">Make a Payment</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-gray-700 mb-2">Amount (USD)</label>
+              <label
+                className={`block mb-2 ${
+                  theme === "light" ? "text-gray-700" : "text-white"
+                }`}
+              >
+                Amount (USD)
+              </label>
               <input
                 type="number"
                 min="1"
@@ -171,7 +183,13 @@ const PaymentForm = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-2">Card Details</label>
+              <label
+                className={`block mb-2 ${
+                  theme === "light" ? "text-gray-700" : "text-white"
+                }`}
+              >
+                Card Details
+              </label>
               <div className="p-2 border rounded">
                 <CardElement />
               </div>
