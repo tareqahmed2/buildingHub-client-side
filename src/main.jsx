@@ -7,14 +7,12 @@ import { ToastContainer } from "react-toastify";
 import AuthProvider from "./context/AuthContext/AuthProvider.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
-import { ThemeProvider } from "next-themes";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
-      <ThemeProvider>
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>
             <RouterProvider router={router} />
@@ -38,7 +36,6 @@ createRoot(document.getElementById("root")).render(
             />
           </QueryClientProvider>
         </HelmetProvider>
-      </ThemeProvider>
     </AuthProvider>
   </StrictMode>
 );

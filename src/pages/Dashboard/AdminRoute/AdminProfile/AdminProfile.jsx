@@ -1,16 +1,12 @@
 import React from "react";
 import useAuth from "../../../../hooks/useAuth";
-import useAxiosPublic from "../../../../hooks/useAxiosPublic";
-import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
 import { Helmet } from "react-helmet-async";
-import { useTheme } from "next-themes";
 
 const AdminProfile = () => {
   const { user } = useAuth();
-  const axiosPublic = useAxiosPublic();
-  const { theme } = useTheme();
   const axiosSecure = useAxiosSecure();
 
   const { data: allUsers = [], isLoading: usersLoading } = useQuery({
@@ -45,170 +41,102 @@ const AdminProfile = () => {
     },
   });
 
-  const availableRooms = apartments.length - bookedRooms.length;
   const totalRooms = apartments.length;
   const unavailableRooms = bookedRooms.length;
+  const availableRooms = totalRooms - unavailableRooms;
 
-  const availablePercentage = ((availableRooms / totalRooms) * 100).toFixed(2);
-  const unavailablePercentage = ((unavailableRooms / totalRooms) * 100).toFixed(
-    2
-  );
+  const availablePercentage =
+    totalRooms > 0 ? ((availableRooms / totalRooms) * 100).toFixed(2) : 0;
+
+  const unavailablePercentage =
+    totalRooms > 0 ? ((unavailableRooms / totalRooms) * 100).toFixed(2) : 0;
 
   return (
     <div className="container mx-auto p-5">
       <Helmet>
         <title>Buildinghub | Admin</title>
       </Helmet>
-      <div
-        className={`flex flex-col md:flex-row items-center  p-6 rounded-lg shadow-md ${
-          theme === "light" ? "bg-white" : "bg-gray-800"
-        }`}
-      >
-        <div className="flex justify-center md:justify-start mb-4 md:mb-0">
-          <img
-            src={user?.photoURL}
-            alt="Admin Profile"
-            className="w-32 h-32 rounded-full object-cover shadow-md"
-          />
-        </div>
 
-        <div className="md:ml-8 text-center md:text-left">
-          <h1
-            className={`text-3xl font-semibold ${
-              theme === "light" ? "text-gray-800" : "to-white"
-            }`}
-          >
-            {user?.displayName}
-          </h1>
-          <p
-            className={` font-semibold ${
-              theme === "light" ? "text-gray-800" : "to-white"
-            }`}
-          >
-            {user?.email}
-          </p>
+      {/* Profile Card */}
+      <div className="card bg-base-100 shadow-md mb-8">
+        <div className="card-body flex flex-col md:flex-row items-center gap-6">
+          <div className="avatar">
+            <div className="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+              <img src={user?.photoURL} alt="Admin Profile" />
+            </div>
+          </div>
+          <div className="text-center md:text-left">
+            <h2 className="text-3xl font-bold">{user?.displayName}</h2>
+            <p className="opacity-70">{user?.email}</p>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-        {/* Total Rooms */}
-        <div
-          className={` p-6 rounded-lg shadow-md text-center ${
-            theme === "light" ? "bg-gray-100" : "bg-gray-800"
-          }`}
-        >
-          <h3
-            className={`text-xl font-semibold text-gray-700 ${
-              theme === "light" ? "text-gray-700" : "text-white"
-            }`}
-          >
-            Total Rooms
-          </h3>
-          {apartmentsLoading ? (
-            <FaSpinner className="animate-spin text-3xl text-blue-500 mx-auto" />
-          ) : (
-            <p className="text-2xl font-bold text-blue-600">
-              {apartments.length}
-            </p>
+      {/* Stats Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="stat bg-base-100 shadow rounded-box text-center">
+          <div className="stat-title">Total Rooms</div>
+          <div className="stat-value text-primary">
+            {apartmentsLoading ? (
+              <FaSpinner className="animate-spin mx-auto" />
+            ) : (
+              totalRooms
+            )}
+          </div>
+        </div>
+
+        <div className="stat bg-base-100 shadow rounded-box text-center">
+          <div className="stat-title">Available Rooms</div>
+          <div className="stat-value text-success">
+            {apartmentsLoading || bookedRoomsLoading ? (
+              <FaSpinner className="animate-spin mx-auto" />
+            ) : (
+              availableRooms
+            )}
+          </div>
+          {!apartmentsLoading && !bookedRoomsLoading && (
+            <div className="stat-desc">
+              {availablePercentage}% of total rooms
+            </div>
           )}
         </div>
 
-        {/* Available Rooms */}
-        <div
-          className={` p-6 rounded-lg shadow-md text-center ${
-            theme === "light" ? "bg-gray-100" : "bg-gray-800"
-          }`}
-        >
-          <h3
-            className={`text-xl font-semibold text-gray-700 ${
-              theme === "light" ? "text-gray-700" : "text-white"
-            }`}
-          >
-            Available Rooms
-          </h3>
-          {apartmentsLoading || bookedRoomsLoading ? (
-            <FaSpinner className="animate-spin text-3xl text-green-500 mx-auto" />
-          ) : (
-            <>
-              <p className="text-2xl font-bold text-green-600">
-                {availableRooms}
-              </p>
-              <p className="text-gray-500">
-                ({availablePercentage}% of total rooms)
-              </p>
-            </>
+        <div className="stat bg-base-100 shadow rounded-box text-center">
+          <div className="stat-title">Unavailable Rooms</div>
+          <div className="stat-value text-error">
+            {bookedRoomsLoading ? (
+              <FaSpinner className="animate-spin mx-auto" />
+            ) : (
+              unavailableRooms
+            )}
+          </div>
+          {!bookedRoomsLoading && (
+            <div className="stat-desc">
+              {unavailablePercentage}% of total rooms
+            </div>
           )}
         </div>
 
-        {/* Unavailable Rooms */}
-        <div
-          className={` p-6 rounded-lg shadow-md text-center ${
-            theme === "light" ? "bg-gray-100" : "bg-gray-800"
-          }`}
-        >
-          <h3
-            className={`text-xl font-semibold text-gray-700 ${
-              theme === "light" ? "text-gray-700" : "text-white"
-            }`}
-          >
-            Unavailable Rooms
-          </h3>
-          {bookedRoomsLoading ? (
-            <FaSpinner className="animate-spin text-3xl text-red-500 mx-auto" />
-          ) : (
-            <>
-              <p className="text-2xl font-bold text-red-600">
-                {unavailableRooms}
-              </p>
-              <p className="text-gray-500">
-                ({unavailablePercentage}% of total rooms)
-              </p>
-            </>
-          )}
+        <div className="stat bg-base-100 shadow rounded-box text-center">
+          <div className="stat-title">Users in Database</div>
+          <div className="stat-value text-info">
+            {usersLoading ? (
+              <FaSpinner className="animate-spin mx-auto" />
+            ) : (
+              allUsers.length
+            )}
+          </div>
         </div>
 
-        {/* Users */}
-        <div
-          className={` p-6 rounded-lg shadow-md text-center ${
-            theme === "light" ? "bg-gray-100" : "bg-gray-800"
-          }`}
-        >
-          <h3
-            className={`text-xl font-semibold text-gray-700 ${
-              theme === "light" ? "text-gray-700" : "text-white"
-            }`}
-          >
-            Users in Database
-          </h3>
-          {usersLoading ? (
-            <FaSpinner className="animate-spin text-3xl text-blue-500 mx-auto" />
-          ) : (
-            <p className="text-2xl font-bold text-blue-600">
-              {allUsers.length}
-            </p>
-          )}
-        </div>
-
-        {/* Members */}
-        <div
-          className={` p-6 rounded-lg shadow-md text-center ${
-            theme === "light" ? "bg-gray-100" : "bg-gray-800"
-          }`}
-        >
-          <h3
-            className={`text-xl font-semibold text-gray-700 ${
-              theme === "light" ? "text-gray-700" : "text-white"
-            }`}
-          >
-            Members in Database
-          </h3>
-          {membersLoading ? (
-            <FaSpinner className="animate-spin text-3xl text-green-500 mx-auto" />
-          ) : (
-            <p className="text-2xl font-bold text-green-600">
-              {allMembers.length}
-            </p>
-          )}
+        <div className="stat bg-base-100 shadow rounded-box text-center">
+          <div className="stat-title">Members in Database</div>
+          <div className="stat-value text-success">
+            {membersLoading ? (
+              <FaSpinner className="animate-spin mx-auto" />
+            ) : (
+              allMembers.length
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -1,11 +1,7 @@
-// src/components/sections/NewsEvents.js
 import React from "react";
 import { motion } from "framer-motion";
-import { useTheme } from "next-themes";
 
 const NewsEvents = () => {
-  const { theme } = useTheme();
-  // Dummy news/events; replace with dynamic data as needed
   const events = [
     {
       id: 1,
@@ -25,7 +21,6 @@ const NewsEvents = () => {
     },
   ];
 
-  // Variants for the container to stagger children animations
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -34,7 +29,6 @@ const NewsEvents = () => {
     },
   };
 
-  // Variants for each event card with a flip effect and shadow animation
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.8, y: 50 },
     visible: {
@@ -46,22 +40,17 @@ const NewsEvents = () => {
   };
 
   return (
-    <section id="news-events" className="mt-10 px-5">
-      <div
-        className={`max-w-screen-xl mx-auto px-4   py-20 rounded-lg 4 ${
-          theme === "light"
-            ? "bg-gradient-to-r from-green-200 via-blue-300 to-purple-400"
-            : "bg-gray-800"
-        }`}
-      >
+    <section id="news-events" className="mt-10 px-5 bg-base-100 text-base-content">
+      <div className="max-w-screen-xl mx-auto px-4 py-20 rounded-xl bg-base-200">
         <motion.h2
-          className="text-3xl md:text-5xl font-extrabold text-center mb-12 text-white drop-shadow-lg "
+          className="text-3xl md:text-5xl font-extrabold text-center mb-12 text-primary"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9 }}
         >
           News & Events
         </motion.h2>
+
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
           variants={containerVariants}
@@ -71,27 +60,17 @@ const NewsEvents = () => {
           {events.map((event) => (
             <motion.div
               key={event.id}
-              className={`   rounded-2xl shadow-lg p-8 border-2 border-gray-600  hover:border-indigo-500 transition-all ease-in-out duration-500 transform ${
-                theme === "light" ? "bg-white" : "bg-gray-800"
-              }`}
+              className="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-500 border border-base-300"
               variants={cardVariants}
-              whileHover={{
-                scale: 1.05,
-                rotate: 2,
-                boxShadow: "0 15px 30px rgba(0,0,0,0.1)",
-              }}
+              whileHover={{ scale: 1.05, rotate: 1 }}
               whileTap={{ scale: 0.95 }}
             >
-              <h3 className="text-3xl font-bold mb-4 text-indigo-800">
-                {event.title}
-              </h3>
-              <p
-                className={` text-lg ${
-                  theme === "light" ? "text-gray-800" : "text-white"
-                }`}
-              >
-                {event.description}
-              </p>
+              <div className="card-body">
+                <h3 className="text-2xl font-bold text-primary mb-4">
+                  {event.title}
+                </h3>
+                <p className="text-lg">{event.description}</p>
+              </div>
             </motion.div>
           ))}
         </motion.div>

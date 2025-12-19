@@ -1,73 +1,81 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
-import { FaSpinner } from "react-icons/fa";
 import { Helmet } from "react-helmet-async";
-import { useTheme } from "next-themes";
 
 const Announcements = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { theme } = useTheme();
-
   const axiosPublic = useAxiosPublic();
 
   useEffect(() => {
-    const fetchAnnouncements = async () => {
-      try {
-        const response = await axiosPublic.get("/announcements");
-        setAnnouncements(response.data);
-      } catch (err) {
+    axiosPublic
+      .get("/announcements")
+      .then((res) => {
+        setAnnouncements(res.data);
+      })
+      .catch(() => {
         setError("Failed to fetch announcements");
-      } finally {
+      })
+      .finally(() => {
         setLoading(false);
-      }
-    };
-
-    fetchAnnouncements();
+      });
   }, [axiosPublic]);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <FaSpinner className="animate-spin text-3xl text-blue-500" />
+      <div className="flex justify-center items-center min-h-screen">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
   }
-  if (error) return <div>{error}</div>;
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-error text-lg">{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="announcements-page">
+    <div className="min-h-screen bg-base-200 p-6">
       <Helmet>
         <title>Buildinghub | Announcements</title>
       </Helmet>
-      <h2 className="text-2xl font-bold mb-4 text-purple-500">Announcements</h2>
-      <div className="announcements-list">
-        {announcements.map((announcement, index) => (
-          <div
-            key={index}
-            className={`announcement-item  p-4 mb-4 rounded-lg shadow-md ${
-              theme === "light" ? "bg-white" : "bg-gray-800"
-            }`}
-          >
-            <h3 className="text-xl font-semibold">{announcement.title}</h3>
-            <p
-              className={` ${
-                theme === "light" ? "text-gray-600" : "text-white"
-              }`}
+
+      <h2 className="text-3xl font-bold mb-6 text-center">
+        Announcements
+      </h2>
+
+      {announcements.length === 0 ? (
+        <p className="text-center text-base-content/60">
+          No announcements available
+        </p>
+      ) : (
+        <div className="max-w-3xl mx-auto space-y-4">
+          {announcements.map((announcement, index) => (
+            <div
+              key={index}
+              className="card bg-base-100 shadow-md border border-base-300"
             >
-              {announcement.description}
-            </p>
-            <p
-              className={` ${
-                theme === "font-light" ? "text-gray-600" : "text-white"
-              }`}
-            >
-              {new Date(announcement.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-        ))}
-      </div>
+              <div className="card-body">
+                <h3 className="card-title">
+                  {announcement.title}
+                </h3>
+                <p className="text-base-content/70">
+                  {announcement.description}
+                </p>
+                <p className="text-sm text-base-content/50">
+                  {new Date(
+                    announcement.createdAt
+                  ).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

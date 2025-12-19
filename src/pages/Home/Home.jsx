@@ -11,18 +11,19 @@ import NewsEvents from "./NewsEvent/NewsEvents";
 
 const Home = () => {
   return (
-    <div>
+    <div className="bg-base-100 text-base-content">
       <Helmet>
         <title>Buildinghub | Home</title>
       </Helmet>
-      <Banner></Banner>
-      <AboutBuilding></AboutBuilding>
-      <CouponSection></CouponSection>
-      <ApartmentLocationSection></ApartmentLocationSection>
-      <TenantReviews></TenantReviews>
-      <NewsEvents></NewsEvents>
-      <Faq></Faq>
-      <ContactUs></ContactUs>
+
+      <Banner />
+      <AboutBuilding />
+      <CouponSection />
+      <ApartmentLocationSection />
+      <TenantReviews />
+      <NewsEvents />
+      <Faq />
+      <ContactUs />
     </div>
   );
 };

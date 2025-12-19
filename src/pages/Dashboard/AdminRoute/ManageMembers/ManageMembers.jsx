@@ -1,19 +1,16 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FaSpinner, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import { Helmet } from "react-helmet-async";
-import { useTheme } from "next-themes";
 
 const ManageMembers = () => {
   const [loading, setLoading] = useState(false);
   const axiosSecure = useAxiosSecure();
   const axiosPublic = useAxiosPublic();
-  const { theme } = useTheme();
 
-  // Query to fetch all members
   const {
     data: members = [],
     isLoading,
@@ -42,10 +39,8 @@ const ManageMembers = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // Send DELETE request to remove the member
           const response = await axiosSecure.delete(`/remove-member/${id}`);
 
-          // Check if the response is successful
           if (response.data.deletedCount > 0) {
             Swal.fire({
               title: "Success!",
@@ -53,7 +48,6 @@ const ManageMembers = () => {
               icon: "success",
               confirmButtonText: "OK",
             });
-
             refetch();
           } else {
             Swal.fire({
@@ -64,7 +58,7 @@ const ManageMembers = () => {
             });
           }
         } catch (error) {
-          console.error("Error removing member:", error);
+          console.error(error);
           Swal.fire({
             title: "Error!",
             text: "An error occurred while removing the member.",
@@ -78,55 +72,62 @@ const ManageMembers = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <FaSpinner className="animate-spin text-3xl text-blue-500" />
+      <div className="flex justify-center items-center min-h-screen">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto py-4 px-1 md:px-6">
+    <div className="p-2 md:p-6">
       <Helmet>
-        <title>Buildinghub | Manage-Members</title>
+        <title>Buildinghub | Manage Members</title>
       </Helmet>
-      <h2 className="text-2xl font-bold text-center mb-6">Manage Members</h2>
-      <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200">
-        <table className="min-w-full table-auto">
-          <thead>
-            <tr className="bg-gray-800 text-white">
-              <th className="px-6 py-3 text-left">User Name</th>
-              <th className="px-6 py-3 text-left">User Email</th>
-              <th className="px-6 py-3 text-left">Role</th>
-              <th className="px-6 py-3 text-left">Floor</th>
-              <th className="px-6 py-3 text-left">Block</th>
-              <th className="px-6 py-3 text-left whitespace-nowrap">Apt No</th>
-              <th className="px-6 py-3 text-left">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {members?.map((member) => (
-              <tr
-                key={member._id}
-                className="border-b hover:bg-gray-100 transition-colors"
-              >
-                <td className="px-6 py-4">{member.userName}</td>
-                <td className="px-6 py-4">{member.userEmail}</td>
-                <td className="px-6 py-4">{member.Role}</td>
-                <td className="px-6 py-4">{member.floor}</td>
-                <td className="px-6 py-4">{member.block}</td>
-                <td className="px-6 py-4">{member.aptNo}</td>
-                <td className="px-6 py-4">
-                  <button
-                    onClick={() => handleRemove(member._id)}
-                    className="text-red-600 hover:text-red-800"
-                  >
-                    <FaTrash className="text-xl" />
-                  </button>
-                </td>
+
+      <h2 className="text-3xl font-bold text-center mb-6">Manage Members</h2>
+
+      <div className="card bg-base-100 shadow-lg">
+        <div className="card-body overflow-x-auto">
+          <table className="table table-zebra">
+            <thead>
+              <tr>
+                <th>User Name</th>
+                <th>User Email</th>
+                <th>Role</th>
+                <th>Floor</th>
+                <th>Block</th>
+                <th>Apt No</th>
+                <th className="text-center">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {members.map((member) => (
+                <tr key={member._id}>
+                  <td>{member.userName}</td>
+                  <td>{member.userEmail}</td>
+                  <td className="capitalize">{member.Role}</td>
+                  <td>{member.floor}</td>
+                  <td>{member.block}</td>
+                  <td>{member.aptNo}</td>
+                  <td className="text-center">
+                    <button
+                      onClick={() => handleRemove(member._id)}
+                      className="btn btn-sm btn-error btn-outline"
+                    >
+                      <FaTrash />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {members.length === 0 && (
+            <p className="text-center py-6 opacity-70">
+              No members found.
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

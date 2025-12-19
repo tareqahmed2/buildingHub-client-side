@@ -5,68 +5,57 @@ import "react-toastify/dist/ReactToastify.css";
 import { Player } from "@lottiefiles/react-lottie-player";
 import useAuth from "../hooks/useAuth";
 import loginani from "../animation/login.json";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Helmet } from "react-helmet-async";
-import { useTheme } from "next-themes";
+
 const Login = () => {
   const { signInWithGoogle, signInWithEmailPassword } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const from = location.state?.from?.pathname || "/";
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const [showPassword, setShowPassword] = useState(false); // State for password toggling
+
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { theme } = useTheme();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  // demo admin login
+
   const demoAdminLogin = async () => {
-    const email = "turjo@admin.com";
-    const pass = "Turjo123";
     try {
-      await signInWithEmailPassword(email, pass);
+      await signInWithEmailPassword("turjo@admin.com", "Turjo123");
       navigate("/", { replace: true });
-    } catch (error) {
-      setError("Failed to log in as admin. Please try again.");
+    } catch {
+      setError("Failed to log in as admin.");
     }
   };
 
   const demoMemberLogin = async () => {
-    const email = "elonMask@gmail.com";
-    const pass = "MaskVai";
     try {
-      await signInWithEmailPassword(email, pass);
+      await signInWithEmailPassword("elonMask@gmail.com", "MaskVai");
       navigate("/", { replace: true });
-    } catch (error) {
-      setError("Failed to log in as member. Please try again.");
+    } catch {
+      setError("Failed to log in as member.");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Clear any existing error
     setError("");
 
     if (!formData.email || !formData.password) {
-      setError("Email and Password are required.");
+      setError("Email and password are required.");
       return;
     }
+
     try {
-      const userCredential = await signInWithEmailPassword(
-        formData.email,
-        formData.password
-      );
-      console.log("User logged in:", userCredential.user);
+      await signInWithEmailPassword(formData.email, formData.password);
       toast.success("Login successful!");
       navigate(from, { replace: true });
-    } catch (error) {
-      console.error("Login failed:", error);
+    } catch {
       setError("Invalid email or password.");
     }
   };
@@ -74,136 +63,120 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     try {
       await signInWithGoogle();
-      Swal.fire(
-        "Google Login",
-        "You have successfully logged in with Google!",
-        "success"
-      );
-      navigate(from, { replace: true } || "/");
-    } catch (error) {
-      Swal.fire(
-        "Login Failed",
-        "There was an issue logging in with Google. Please try again.",
-        "error"
-      );
+      Swal.fire("Success", "Logged in with Google!", "success");
+      navigate(from, { replace: true });
+    } catch {
+      Swal.fire("Error", "Google login failed.", "error");
     }
   };
 
   return (
-    <div
-      className={` flex rounded-lg mt-10 max-w-screen-xl mx-auto flex-col lg:flex-row items-center justify-center min-h-screen  p-4 ${
-        theme === "light"
-          ? "bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400"
-          : " bg-gray-800"
-      }`}
-    >
+    <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
       <Helmet>
         <title>Buildinghub | Login</title>
       </Helmet>
-      <div className="w-full lg:w-1/2 flex justify-center mb-6 lg:mb-0">
-        <Player
-          autoplay
-          loop
-          src={loginani}
-          className="w-3/4 sm:w-1/2 md:w-2/5 lg:w-3/4 max-w-sm"
-        />
-      </div>
 
-      <div
-        className={`w-full lg:w-1/2 max-w-md p-6  rounded-lg shadow-lg ${
-          theme === "light" ? "bg-white" : "bg-gray-800"
-        }`}
-      >
-        <h2 className="text-3xl font-bold text-center text-gray-700">
-          Welcome Back
-        </h2>
-        <p className="text-center text-sm text-gray-500 mt-2">
-          Login to your account
-        </p>
+      <div className="max-w-screen-xl w-full flex flex-col lg:flex-row items-center gap-10">
 
-        <form className="mt-6" onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-600"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
+        {/* Animation */}
+        <div className="w-full lg:w-1/2 flex justify-center">
+          <Player
+            autoplay
+            loop
+            src={loginani}
+            className="w-72 md:w-96"
+          />
+        </div>
+
+        {/* Login Card */}
+        <div className="w-full lg:w-1/2 max-w-md">
+          <div className="card bg-base-100 shadow-xl">
+            <div className="card-body">
+              <h2 className="text-3xl font-bold text-center">
+                Welcome Back
+              </h2>
+              <p className="text-center text-base-content/60">
+                Login to your account
+              </p>
+
+              <form className="mt-6" onSubmit={handleSubmit}>
+                <div className="form-control mb-4">
+                  <label className="label">
+                    <span className="label-text">Email</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    className="input input-bordered"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-control mb-4 relative">
+                  <label className="label">
+                    <span className="label-text">Password</span>
+                  </label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    className="input input-bordered pr-10"
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-[52px] text-base-content/60"
+                  >
+                    {showPassword ? <FiEyeOff /> : <FiEye />}
+                  </button>
+                </div>
+
+                {error && (
+                  <p className="text-error text-sm mb-2">{error}</p>
+                )}
+
+                <button type="submit" className="btn btn-primary w-full mt-2">
+                  Login
+                </button>
+              </form>
+
+              <div className="divider">OR</div>
+
+              <button
+                onClick={handleGoogleLogin}
+                className="btn btn-error btn-outline w-full"
+              >
+                Login with Google
+              </button>
+
+              <button
+                onClick={demoAdminLogin}
+                className="btn btn-secondary btn-outline w-full mt-3"
+              >
+                Demo Admin
+              </button>
+
+              <button
+                onClick={demoMemberLogin}
+                className="btn btn-accent btn-outline w-full mt-2"
+              >
+                Demo Member
+              </button>
+
+              <p className="mt-4 text-center text-sm">
+                Don't have an account?{" "}
+                <Link to="/register" className="link link-primary">
+                  Register here
+                </Link>
+              </p>
+            </div>
           </div>
+        </div>
 
-          <div className="mb-4 relative">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-600"
-            >
-              Password
-            </label>
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              id="password"
-              className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-3 top-[45px] transform -translate-y-1/2 text-gray-600 hover:text-gray-800"
-            >
-              {showPassword ? <FiEyeOff /> : <FiEye />}
-            </button>
-          </div>
-
-          {error && <p className="text-sm text-red-500">{error}</p>}
-          <button
-            type="button"
-            onClick={demoAdminLogin}
-            className="w-full my-3 px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-300 transition duration-300"
-          >
-            Demo Admin
-          </button>
-          <button
-            type="button"
-            onClick={demoMemberLogin}
-            className="w-full my-3 px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-300 transition duration-300"
-          >
-            Demo Member
-          </button>
-
-          <button
-            type="submit"
-            className="w-full my-3 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
-          >
-            Login
-          </button>
-        </form>
-
-        <button
-          onClick={handleGoogleLogin}
-          className="w-full mt-4 px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
-        >
-          Login with Google
-        </button>
-
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
-          <a href="/register" className="text-blue-500 hover:underline">
-            Register here
-          </a>
-        </p>
       </div>
     </div>
   );

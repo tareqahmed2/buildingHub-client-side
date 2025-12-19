@@ -2,6 +2,10 @@
 <html data-theme="dark" lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      const theme = localStorage.getItem("theme") || "light";
+      document.documentElement.setAttribute("data-theme", theme);
+    </script>
     <link
       rel="shortcut icon"
       href="./src/assets/logo.webp"

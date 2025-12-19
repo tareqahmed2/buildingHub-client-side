@@ -1,47 +1,59 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 import logo from "../assets/logo.webp";
-import { NavLink } from "react-router-dom";
-import HamburgerMenu from "react-hamburger-menu"; // Import the React Hamburger Menu
-import Theme from "../global/Theme";
-import { useTheme } from "next-themes";
+import HamburgerMenu from "react-hamburger-menu";
+
+const daisyThemes = [
+  "light","dark","cupcake","bumblebee","emerald","corporate","synthwave",
+  "retro","cyberpunk","valentine","halloween","garden","forest","aqua",
+  "lofi","pastel","fantasy","wireframe","black","luxury","dracula","cmyk",
+  "autumn","business","acid","lemonade","night","coffee","winter","dim",
+  "nord","sunset",
+];
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [hamburgerOpen, setHamburgerOpen] = useState(false); // State for hamburger menu
+  const [hamburgerOpen, setHamburgerOpen] = useState(false);
+  const [theme, setTheme] = useState("light");
+
   const { user, loading, signOutUser } = useAuth();
   const navigate = useNavigate();
-  const { theme } = useTheme();
+
+  // Load theme from localStorage on first render
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    setTheme(savedTheme);
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  }, []);
+
+  const handleThemeChange = (e) => {
+    const selectedTheme = e.target.value;
+    setTheme(selectedTheme);
+    localStorage.setItem("theme", selectedTheme);
+    document.documentElement.setAttribute("data-theme", selectedTheme);
+  };
+
   const links = (
     <>
       <li>
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            isActive ? "text-blue-600 font-bold" : "hover:text-blue-600"
-          }
-        >
+        <NavLink to="/" className={({ isActive }) =>
+          isActive ? "font-bold text-primary" : "hover:text-primary"
+        }>
           Home
         </NavLink>
       </li>
       <li>
-        <NavLink
-          to="/apartment"
-          className={({ isActive }) =>
-            isActive ? "text-blue-600 font-bold" : "hover:text-blue-600"
-          }
-        >
+        <NavLink to="/apartment" className={({ isActive }) =>
+          isActive ? "font-bold text-primary" : "hover:text-primary"
+        }>
           Apartments
         </NavLink>
-      </li>{" "}
+      </li>
       <li>
-        <NavLink
-          to="/about"
-          className={({ isActive }) =>
-            isActive ? "text-blue-600 font-bold" : "hover:text-blue-600"
-          }
-        >
+        <NavLink to="/about" className={({ isActive }) =>
+          isActive ? "font-bold text-primary" : "hover:text-primary"
+        }>
           About Us
         </NavLink>
       </li>
@@ -49,121 +61,89 @@ const Navbar = () => {
   );
 
   return (
-    <div
-      className={` shadow-lg sticky top-0 z-50 ${
-        theme === "light" ? "bg-white" : "bg-gray-800"
-      }`}
-    >
+    <div className="navbar bg-base-100 shadow-lg sticky top-0 z-50">
       <div className="navbar max-w-screen-xl mx-auto">
+
+        {/* Left */}
         <div className="navbar-start">
           <img
             src={logo}
-            alt="Profile"
-            className="h-12 w-12 rounded-full cursor-pointer border-2 hidden md:block"
+            alt="Logo"
+            className="h-12 w-12 rounded-full cursor-pointer border hidden md:block"
             onClick={() => navigate("/")}
           />
-          <a
-            href="/"
-            className={`ml-2  text-xl font-bold ${
-              theme === "light" ? "text-gray-800" : "text-white"
-            }`}
+          <span
+            onClick={() => navigate("/")}
+            className="ml-2 text-xl font-bold cursor-pointer"
           >
             BuildingHub
-          </a>
+          </span>
         </div>
 
-        {/* Links on larger screens */}
+        {/* Center */}
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">{links}</ul>
         </div>
 
-        {/* Hamburger menu for mobile */}
-        <div
-          className={`navbar-end lg:hidden mr-3 ${
-            theme === "light" ? "bg-white" : "bg-gray-600"
-          }`}
-        >
+        {/* Mobile */}
+        <div className="navbar-end lg:hidden mr-3 relative">
           <HamburgerMenu
             isOpen={hamburgerOpen}
             menuClicked={() => setHamburgerOpen(!hamburgerOpen)}
             width={30}
             height={20}
             strokeWidth={2}
-            color="black"
+            color="currentColor"
             animationDuration={0.5}
           />
-
-          {/* Hamburger menu items */}
           {hamburgerOpen && (
-            <div className="absolute top-16 right-0 bg-blue-500 text-white shadow-lg rounded-lg w-48">
-              <ul className="flex flex-col p-4">{links}</ul>
+            <div className="absolute top-16 right-0 bg-base-100 shadow-lg rounded-lg w-48 border">
+              <ul className="menu p-4">{links}</ul>
             </div>
           )}
         </div>
 
-        {/* User login/logout & dropdown */}
-        <div className="navbar-end">
+        {/* Right */}
+        <div className="navbar-end gap-3">
+
+          {/* Theme Selector */}
+          <select
+            value={theme}
+            onChange={handleThemeChange}
+            className="select select-bordered select-sm"
+          >
+            {daisyThemes.map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+
           {loading ? (
-            <span className="loading-spinner">Loading...</span>
+            <span className="loading loading-spinner"></span>
           ) : user ? (
-            <div className="relative ">
-              <div className="flex items-center">
-                <div className="mr-3">
-                  <Theme></Theme>
-                </div>
-                <img
-                  src={user?.photoURL}
-                  alt="Profile"
-                  className="h-10 w-10 rounded-full cursor-pointer border-2 border-blue-500"
-                  onClick={() => setDropdownOpen((prev) => !prev)}
-                />
-              </div>
+            <div className="relative">
+              <img
+                src={user?.photoURL}
+                alt="Profile"
+                className="h-10 w-10 rounded-full cursor-pointer border border-primary"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              />
 
               {dropdownOpen && (
-                <div
-                  className={`absolute right-0 mt-2 w-48  ${
-                    theme === "light"
-                      ? "bg-white text-gray-700 "
-                      : "text-white bg-[#374151]"
-                  } rounded-lg shadow-lg z-20`}
-                >
+                <div className="absolute right-0 mt-2 w-48 bg-base-100 rounded-lg shadow-lg border z-20">
                   <div className="p-4 border-b">
                     <p className="font-semibold">{user?.displayName}</p>
                   </div>
-                  <ul className="flex flex-col">
-                    <li>
-                      <Link
-                        to="/dashboard"
-                        className="block px-4 py-2 hover:underline"
-                      >
-                        Dashboard
-                      </Link>
-                    </li>
-
-                    <li>
-                      <button
-                        onClick={signOutUser}
-                        className="block px-4 py-2 text-left w-full hover:underline"
-                      >
-                        Logout
-                      </button>
-                    </li>
+                  <ul className="menu">
+                    <li><Link to="/dashboard">Dashboard</Link></li>
+                    <li><button onClick={signOutUser}>Logout</button></li>
                   </ul>
                 </div>
               )}
             </div>
           ) : (
-            <div className="flex items-center">
-              <div className="mr-3">
-                <Theme></Theme>
-              </div>
-              <a
-                href="/login"
-                className="btn btn-primary text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
-              >
-                Login
-              </a>
-            </div>
+            <Link to="/login" className="btn btn-primary btn-sm">
+              Login
+            </Link>
           )}
         </div>
       </div>

@@ -1,9 +1,7 @@
-// src/components/sections/ContactUs.js
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
 import contactAnimation from "../../../animation/contactani.json";
-import { useTheme } from "next-themes";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +9,6 @@ const ContactUs = () => {
     email: "",
     message: "",
   });
-  const { theme } = useTheme();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,20 +16,14 @@ const ContactUs = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add form submission logic here (e.g., API call)
-
-    //
     alert("Your message has been sent!");
     setFormData({ name: "", email: "", message: "" });
   };
 
   return (
-    <section className="py-5  px-5">
-      <div
-        className={`max-w-screen-xl mx-auto py-5 px-4 flex flex-col md:flex-row items-center gap-8  rounded-lg ${
-          theme === "light" ? "bg-gray-50" : "bg-gray-800"
-        }`}
-      >
+    <section className="py-10 px-5 bg-base-100 text-base-content">
+      <div className="max-w-screen-xl mx-auto py-10 px-6 flex flex-col md:flex-row items-center gap-10 rounded-xl bg-base-200">
+
         {/* Lottie Animation */}
         <motion.div
           className="w-full md:w-1/2"
@@ -40,7 +31,7 @@ const ContactUs = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <Lottie animationData={contactAnimation} loop={true} />
+          <Lottie animationData={contactAnimation} loop />
         </motion.div>
 
         {/* Contact Form */}
@@ -51,13 +42,14 @@ const ContactUs = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <motion.h2
-            className="text-3xl font-bold text-center mb-6"
+            className="text-3xl font-bold text-center mb-6 text-primary"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
             Contact Us
           </motion.h2>
+
           <motion.form
             onSubmit={handleSubmit}
             className="max-w-lg mx-auto space-y-4"
@@ -71,36 +63,36 @@ const ContactUs = () => {
               placeholder="Your Name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full p-3 border rounded"
+              className="input input-bordered w-full"
               required
               whileFocus={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
             />
+
             <motion.input
               type="email"
               name="email"
               placeholder="Your Email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-3 border rounded"
+              className="input input-bordered w-full"
               required
               whileFocus={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
             />
+
             <motion.textarea
               name="message"
               placeholder="Your Message"
               value={formData.message}
               onChange={handleChange}
-              className="w-full p-3 border rounded"
+              className="textarea textarea-bordered w-full"
               rows="4"
               required
               whileFocus={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-            ></motion.textarea>
+            />
+
             <motion.button
               type="submit"
-              className="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600"
+              className="btn btn-primary w-full"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}

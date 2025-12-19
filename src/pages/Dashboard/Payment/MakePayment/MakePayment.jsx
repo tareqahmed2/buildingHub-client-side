@@ -1,170 +1,133 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../../../hooks/useAuth";
-import useAxiosPublic from "../../../../hooks/useAxiosPublic";
-import { toast } from "react-toastify";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
+import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
-import { useTheme } from "next-themes";
 
 const MakePayment = () => {
   const navigate = useNavigate();
-  const { theme } = useTheme();
-  // const [agreements, setAgreements] = useState([]);
-  const [agreement, setAgreement] = useState({});
-
   const { user } = useAuth();
-  const email = user.email;
-  const axiosPublic = useAxiosPublic();
   const axiosSecure = useAxiosSecure();
-  const [month, setMonth] = useState("");
-  const [discountedRent, setDiscountedRent] = useState(0);
-  const [loading, setLoading] = useState(true); // Add loading state
 
-  // Fetch agreements for the logged-in user
+  const [agreement, setAgreement] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  const email = user?.email;
+
   useEffect(() => {
-    const fetchAgreements = async () => {
-      setLoading(true); // Start loading
-      try {
-        const response = await axiosSecure.get(`/agreements/${email}`);
-        setAgreement(response.data);
-      } catch (error) {
-        console.error("Error fetching agreements:", error);
-        toast.error("Failed to load agreements");
-      } finally {
-        setLoading(false); // Stop loading
-      }
-    };
+    if (!email) return;
 
-    fetchAgreements();
-  }, [email]);
+    setLoading(true);
+    axiosSecure
+      .get(`/agreements/${email}`)
+      .then((res) => {
+        setAgreement(res.data || {});
+      })
+      .catch(() => {
+        toast.error("Failed to load agreement information");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [axiosSecure, email]);
 
-  // Handle payment logic
   const handlePayment = () => {
     navigate("payment-form");
   };
 
   return (
-    <div
-      className={`p-4 max-w-md mx-auto rounded shadow ${
-        theme === "light"
-          ? "bg-white text-gray-700"
-          : "  text-white tbg-gray-800"
-      }`}
-    >
-      <h2 className="text-xl font-bold mb-4">Make Payment</h2>
-      {loading ? (
-        <div className="flex justify-center items-center h-32">
-          {/* DaisyUI Spinner */}
-          <span className="loading loading-spinner loading-lg text-green-500"></span>
-        </div>
-      ) : (
-        <form>
-          {/* Member details */}
-          {/* {agreements.map((agreement, index) => (
-            
-          ))} */}
-          <div>
-            <div className="mb-4">
-              <Helmet>
-                <title>Buildinghub | Make Payment</title>
-              </Helmet>
-              <label
-                className={`block ${
-                  theme === "light" ? "text-gray-800" : "text-white"
-                }`}
-              >
-                Member Email
-              </label>
-              <input
-                type="email"
-                readOnly
-                value={agreement.userEmail}
-                className={`w-full p-2 border rounded  ${
-                  theme === "light" ? "bg-gray-100" : "bg-gray-600"
-                }`}
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className={`block ${
-                  theme === "light" ? "text-gray-800" : "text-white"
-                }`}
-              >
-                Floor
-              </label>
-              <input
-                type="text"
-                readOnly
-                value={agreement.floor}
-                className={`w-full p-2 border rounded  ${
-                  theme === "light" ? "bg-gray-100" : "bg-gray-600"
-                }`}
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className={`block ${
-                  theme === "light" ? "text-gray-800" : "text-white"
-                }`}
-              >
-                Block Name
-              </label>
-              <input
-                type="text"
-                readOnly
-                value={agreement.block}
-                className={`w-full p-2 border rounded  ${
-                  theme === "light" ? "bg-gray-100" : "bg-gray-600"
-                }`}
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className={`block ${
-                  theme === "light" ? "text-gray-800" : "text-white"
-                }`}
-              >
-                Apartment No/Room No
-              </label>
-              <input
-                type="text"
-                readOnly
-                value={agreement.aptNo}
-                className={`w-full p-2 border rounded  ${
-                  theme === "light" ? "bg-gray-100" : "bg-gray-600"
-                }`}
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className={`block ${
-                  theme === "light" ? "text-gray-800" : "text-white"
-                }`}
-              >
-                Rent
-              </label>
-              <input
-                type="text"
-                readOnly
-                value={agreement.rent}
-                className={`w-full p-2 border rounded  ${
-                  theme === "light" ? "bg-gray-100" : "bg-gray-600"
-                }`}
-              />
-            </div>
-          </div>
+    <div className="min-h-screen bg-base-200 flex items-center justify-center p-4">
+      <Helmet>
+        <title>Buildinghub | Make Payment</title>
+      </Helmet>
 
-          {/* Payment Button */}
-          <button
-            type="button"
-            onClick={handlePayment}
-            className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
-          >
-            Pay Now
-          </button>
-        </form>
-      )}
+      <div className="card bg-base-100 shadow-xl w-full max-w-md">
+        <div className="card-body">
+          <h2 className="text-2xl font-bold text-center mb-4">
+            Make Payment
+          </h2>
+
+          {loading ? (
+            <div className="flex justify-center items-center h-40">
+              <span className="loading loading-spinner loading-lg text-primary"></span>
+            </div>
+          ) : (
+            <>
+              <div className="space-y-4">
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Member Email</span>
+                  </label>
+                  <input
+                    type="email"
+                    readOnly
+                    value={agreement.userEmail || ""}
+                    className="input input-bordered bg-base-200"
+                  />
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Floor</span>
+                  </label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={agreement.floor || ""}
+                    className="input input-bordered bg-base-200"
+                  />
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Block</span>
+                  </label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={agreement.block || ""}
+                    className="input input-bordered bg-base-200"
+                  />
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Apartment No</span>
+                  </label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={agreement.aptNo || ""}
+                    className="input input-bordered bg-base-200"
+                  />
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Rent</span>
+                  </label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={agreement.rent || ""}
+                    className="input input-bordered bg-base-200"
+                  />
+                </div>
+
+              </div>
+
+              <button
+                onClick={handlePayment}
+                className="btn btn-success w-full mt-6"
+              >
+                Pay Now
+              </button>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

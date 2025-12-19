@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
-import { useTheme } from "next-themes";
 
 const CouponSection = () => {
   const [coupons, setCoupons] = useState([]);
   const axiosPublic = useAxiosPublic();
 
-  const { theme } = useTheme();
   useEffect(() => {
     const fetchCoupons = async () => {
       try {
@@ -42,7 +40,7 @@ const CouponSection = () => {
           confirmButtonText: "Close",
         });
       })
-      .catch((error) => {
+      .catch(() => {
         Swal.fire({
           title: "Oops!",
           text: "Failed to copy the coupon code. Please try again.",
@@ -53,90 +51,61 @@ const CouponSection = () => {
   };
 
   return (
-    <section className="px-5">
+    <section className="px-5 bg-base-100 text-base-content">
       <div
         id="coupon-deals"
-        className={`py-16 px-4 max-w-screen-xl mx-auto rounded-lg ${
-          theme === "light"
-            ? "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 "
-            : "bg-gray-800"
-        }`}
+        className="py-16 px-4 max-w-screen-xl mx-auto rounded-xl bg-base-200"
       >
-        <div className=" text-center">
-          <h2 className="text-2xl md:4xl font-bold text-white mb-8">
+        <div className="text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-8">
             Exclusive Coupons
           </h2>
-          <p className="text-lg text-white mb-12">
-            Save on your next payment! Choose the best coupon for your rental
-            and apply it today.
+          <p className="text-lg mb-12">
+            Save on your next payment. Choose the best coupon and apply it today.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
             {coupons.map((coupon) => (
               <div
                 key={coupon.id}
-                className={`card border-t-2 border-b-2 border-gray-700 rounded-lg shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-300 ${
-                  theme === "light" ? " bg-white" : "bg-gray-800"
-                }`}
+                className="card bg-base-100 shadow-xl hover:scale-105 transition-transform duration-300"
               >
-                <div
-                  className={`card-body text-center ${
-                    theme === "light"
-                      ? " bg-gradient-to-r from-indigo-400 to-pink-300 "
-                      : "bg-gray-800"
-                  }`}
-                >
-                  <h3 className="text-2xl font-semibold text-white">
-                    {coupon.code}
-                  </h3>
-                  <p className="text-white text-lg mt-2">
-                    {coupon.description}
-                  </p>
+                <div className="card-body items-center text-center bg-primary text-primary-content rounded-t-xl">
+                  <h3 className="text-2xl font-semibold">{coupon.code}</h3>
+                  <p className="text-lg">{coupon.description}</p>
                 </div>
 
-                <div
-                  className={`card-body text-center ${
-                    theme === "light" ? "bg-white" : "bg-gray-800"
-                  }`}
-                >
-                  <p
-                    className={`text-sm ${
-                      theme === "light" ? "text-gray-800" : "text-white"
-                    }`}
-                  >
+                <div className="card-body items-center text-center">
+                  <p className="text-sm">
                     <span className="font-semibold">Expires:</span>{" "}
                     {coupon.expiryDate}
                   </p>
-                  <p className="text-lg font-bold text-indigo-600 mt-2">
+
+                  <p className="text-lg font-bold text-primary">
                     {coupon.discountPercentage}% OFF
                   </p>
-                  <div className="mt-2">
-                    <span
-                      className={`badge text-lg font-bold ${
-                        coupon.availability
-                          ? "badge-primary text-white"
-                          : "badge-secondary text-gray-800"
-                      }`}
-                    >
-                      {coupon.availability
-                        ? "Coupon Is Available"
-                        : "Coupon Not Available"}
-                    </span>
-                  </div>
+
+                  <span
+                    className={`badge badge-lg font-bold ${
+                      coupon.availability
+                        ? "badge-success"
+                        : "badge-error"
+                    }`}
+                  >
+                    {coupon.availability
+                      ? "Coupon Available"
+                      : "Not Available"}
+                  </span>
                 </div>
 
-                <div
-                  className={`card-footer p-4  text-center rounded-b-lg ${
-                    theme === "light"
-                      ? "bg-gradient-to-l from-pink-400 to-indigo-300"
-                      : "bg-gray-800"
-                  }`}
-                >
+                <div className="card-actions justify-center pb-6">
                   <button
-                    className={`bg-indigo-600 text-white py-2 px-4 rounded-lg transform hover:scale-105 transition-all duration-200 
-                  }`}
+                    className="btn btn-primary"
                     onClick={() =>
-                      handleApplyCoupon(coupon.code, coupon.availability)
+                      handleApplyCoupon(
+                        coupon.code,
+                        coupon.availability
+                      )
                     }
                   >
                     Apply Coupon

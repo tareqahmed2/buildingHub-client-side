@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import useAxiosPublic from "../../../../hooks/useAxiosPublic";
 import { toast } from "react-toastify";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import { Helmet } from "react-helmet-async";
@@ -9,9 +8,10 @@ const MakeAnnouncement = () => {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const axiosSecure = useAxiosSecure();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading state to true while submitting
+    setLoading(true);
 
     try {
       const response = await axiosSecure.post("/announcements", {
@@ -20,14 +20,12 @@ const MakeAnnouncement = () => {
       });
 
       if (response.status === 200) {
-        console.log("Announcement created:", response.data);
         toast.success("Announcement posted successfully!");
-        // Reset form fields after success
         setTitle("");
         setDescription("");
       }
     } catch (error) {
-      console.error("Error creating announcement:", error);
+      console.error(error);
       toast.error("There was an error posting the announcement.");
     } finally {
       setLoading(false);
@@ -35,58 +33,65 @@ const MakeAnnouncement = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto p-4 md:p-6">
       <Helmet>
-        <title>Buildinghub | Make-Announcement</title>
+        <title>Buildinghub | Make Announcement</title>
       </Helmet>
-      <h2 className="text-2xl font-bold mb-6 text-center text-purple-500">
-        Make Announcement
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label
-            htmlFor="title"
-            className="block text-lg  mb-2 text-purple-600 font-bold"
-          >
-            Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter the title of the announcement"
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
 
-        <div>
-          <label
-            htmlFor="description"
-            className="block text-lg  text-purple-600 font-bold mb-2"
-          >
-            Description
-          </label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter the description of the announcement"
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-            rows="4"
-            required
-          ></textarea>
-        </div>
+      <div className="card bg-base-100 shadow-lg">
+        <div className="card-body">
+          <h2 className="text-3xl font-bold text-center mb-6">
+            Make Announcement
+          </h2>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-500"
-          disabled={loading}
-        >
-          {loading ? "Submitting..." : "Submit Announcement"}
-        </button>
-      </form>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-semibold">Title</span>
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter announcement title"
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-semibold">Description</span>
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter announcement description"
+                className="textarea textarea-bordered w-full"
+                rows="5"
+                required
+              ></textarea>
+            </div>
+
+            <div className="form-control mt-4">
+              <button
+                type="submit"
+                className="btn btn-primary w-full"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <span className="loading loading-spinner"></span>
+                    Posting...
+                  </>
+                ) : (
+                  "Post Announcement"
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

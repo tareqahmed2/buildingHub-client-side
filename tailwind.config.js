@@ -1,13 +1,16 @@
 /** @type {import('tailwindcss').Config} */
-export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+module.exports = {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
-    extend: {
-      fontFamily: {
-        lora: ["lora", "serif"],
-        roboto: ["roboto", "sans-serif"],
-      },
-    },
+    extend: {},
   },
-  plugins: [require("daisyui")],
+  plugins: [
+    require("daisyui"), // DaisyUI ব্যবহার না করলে এই লাইন remove করো
+  ],
+  daisyui: {
+    themes: "all", // সব DaisyUI theme
+  },
 };

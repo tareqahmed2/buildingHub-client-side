@@ -3,59 +3,48 @@ import Swal from "sweetalert2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import { FaEdit } from "react-icons/fa";
 import { Helmet } from "react-helmet-async";
-import { useTheme } from "next-themes";
 
 const ManageCoupons = () => {
   const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
+
   const [showModal, setShowModal] = useState(false);
-  const { theme } = useTheme();
+  const [showEditModal, setShowEditModal] = useState(false);
+
   const [newCoupon, setNewCoupon] = useState({
     code: "",
     description: "",
-    expiryDate: null, // Updated for DatePicker
+    expiryDate: null,
     discountPercentage: "",
-    allProperties: false,
   });
 
-  const [editCoupon, setEditCoupon] = useState(true);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [editCoupon, setEditCoupon] = useState(null);
 
-  // Format date to dd/mm/yyyy
   const formatDate = (date) => {
     const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
+    return `${String(d.getDate()).padStart(2, "0")}/${String(
+      d.getMonth() + 1
+    ).padStart(2, "0")}/${d.getFullYear()}`;
   };
 
-  // Fetch coupons with useQuery
-  const {
-    data: coupons,
-    isLoading,
-    refetch,
-  } = useQuery({
+  const { data: coupons, isLoading, refetch } = useQuery({
     queryKey: ["coupons"],
     queryFn: async () => {
-      const response = await axiosSecure.get("/coupons");
-      return response.data;
+      const res = await axiosSecure.get("/coupons");
+      return res.data;
     },
   });
 
-  // Mutation for adding a new coupon
   const addCouponMutation = useMutation({
-    mutationFn: async (newCoupon) => {
-      const response = await axiosSecure.post("/coupons", {
-        ...newCoupon,
-        expiryDate: formatDate(newCoupon.expiryDate),
+    mutationFn: async (coupon) => {
+      return axiosSecure.post("/coupons", {
+        ...coupon,
+        expiryDate: formatDate(coupon.expiryDate),
         availability: true,
       });
-      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["coupons"]);
@@ -65,243 +54,109 @@ const ManageCoupons = () => {
         description: "",
         expiryDate: null,
         discountPercentage: "",
-        allProperties: false,
       });
-      Swal.fire({
-        icon: "success",
-        title: "Coupon Added!",
-        text: "The coupon has been added successfully.",
-      });
+      Swal.fire("Success!", "Coupon added successfully.", "success");
     },
     onError: () => {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "There was an error adding the coupon. Please try again.",
-      });
+      Swal.fire("Error!", "Failed to add coupon.", "error");
     },
   });
 
-  // Mutation for updating a coupon
-
-  // Handle input change
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setNewCoupon({
       ...newCoupon,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     });
   };
 
-  // Handle date change for DatePicker
-  const handleDateChange = (date) => {
-    setNewCoupon({
-      ...newCoupon,
-      expiryDate: date,
-    });
-  };
-
-  // Handle form submit for adding coupon
   const handleSubmit = (e) => {
     e.preventDefault();
     addCouponMutation.mutate(newCoupon);
   };
 
-  // Handle form submit for editing coupon
   const handleEditSubmit = (e) => {
     e.preventDefault();
     axiosSecure.patch(`/coupons/${editCoupon._id}`, editCoupon).then((res) => {
-      console.log(res.data);
       if (res.data.modifiedCount > 0) {
         refetch();
         setShowEditModal(false);
-        Swal.fire({
-          title: "Success!",
-          text: "Coupon updated successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-        });
+        Swal.fire("Success!", "Coupon updated successfully.", "success");
       } else {
-        Swal.fire({
-          title: "No changes made!",
-          text: "The coupon was not modified.",
-          icon: "info",
-          confirmButtonText: "OK",
-        });
+        Swal.fire("Info", "No changes made.", "info");
       }
     });
   };
 
-  // Handle opening the edit modal
-  const handleEdit = (coupon) => {
-    setEditCoupon(coupon);
-    setShowEditModal(true);
-  };
-
   return (
-    <div className="manage-coupons p-4 md:p-8">
+    <div className="p-4 md:p-8">
+      <Helmet>
+        <title>Buildinghub | Manage Coupons</title>
+      </Helmet>
+
       <h1 className="text-2xl md:text-3xl font-bold text-center mb-6">
         Manage Coupons
       </h1>
+
       <button
-        className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
+        className="btn btn-primary mb-4"
         onClick={() => setShowModal(true)}
       >
         Add Coupon
       </button>
 
-      {/* Coupons Table */}
-      <div className="mt-6 overflow-x-auto">
+      <div className="overflow-x-auto">
         {isLoading ? (
-          <div className="flex justify-center items-center">
-            <span className="loading loading-spinner loading-lg text-blue-500"></span>
+          <div className="flex justify-center">
+            <span className="loading loading-spinner loading-lg text-primary"></span>
           </div>
         ) : (
-          <table
-            className={`min-w-full  rounded-lg shadow-md ${
-              theme === "light" ? "bg-white" : "bg-gray-800"
-            }`}
-          >
-            <Helmet>
-              <title>Buildinghub | Manage-coupons</title>
-            </Helmet>
+          <table className="table w-full bg-base-100 shadow-md rounded-lg">
             <thead>
-              <tr
-                className={` ${
-                  theme === "light"
-                    ? " bg-gray-100 text-gray-700"
-                    : "bg-gray-800 text-white"
-                }`}
-              >
-                <th
-                  className={`text-left p-4  font-semibold whitespace-nowrap ${
-                    theme === "light" ? "text-gray-700" : "text-white"
-                  }`}
-                >
-                  Coupon Code
-                </th>
-                <th
-                  className={`text-left p-4  font-semibold whitespace-nowrap ${
-                    theme === "light" ? "text-gray-700" : "text-white"
-                  }`}
-                >
-                  Description
-                </th>
-                <th
-                  className={`text-left p-4  font-semibold whitespace-nowrap ${
-                    theme === "light" ? "text-gray-700" : "text-white"
-                  }`}
-                >
-                  Expiry Date
-                </th>
-                <th
-                  className={`text-left p-4  font-semibold whitespace-nowrap ${
-                    theme === "light" ? "text-gray-700" : "text-white"
-                  }`}
-                >
-                  Discount (%)
-                </th>
-                <th
-                  className={`text-left p-4  font-semibold whitespace-nowrap ${
-                    theme === "light" ? "text-gray-700" : "text-white"
-                  }`}
-                >
-                  All Properties
-                </th>
-                <th
-                  className={`text-left p-4  font-semibold whitespace-nowrap ${
-                    theme === "light" ? "text-gray-700" : "text-white"
-                  }`}
-                >
-                  Availability
-                </th>
-                <th
-                  className={`text-left p-4  font-semibold whitespace-nowrap ${
-                    theme === "light" ? "text-gray-700" : "text-white"
-                  }`}
-                >
-                  Action
-                </th>
+              <tr>
+                <th>Coupon Code</th>
+                <th>Description</th>
+                <th>Expiry Date</th>
+                <th>Discount (%)</th>
+                <th>Availability</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {coupons?.length > 0 ? (
-                coupons.map((coupon, index) => (
-                  <tr
-                    key={index}
-                    className={`border-b ${
-                      theme === "light" ? "bg-gray-100" : "bg-gray-800"
-                    }`}
-                  >
-                    <td
-                      className={`p-4 ${
-                        theme === "light" ? "text-gray-800" : "text-white"
-                      }`}
-                    >
-                      {coupon?.code}
-                    </td>
-                    <td
-                      className={`p-4 ${
-                        theme === "light" ? "text-gray-800" : "text-white"
-                      }`}
-                    >
-                      {coupon?.description}
-                    </td>
-                    <td
-                      className={`p-4  whitespace-nowrap ${
-                        theme === "light" ? "text-gray-800" : "text-white"
-                      }`}
-                    >
-                      {coupon?.expiryDate}
-                    </td>
-                    <td
-                      className={`p-4 ${
-                        theme === "light" ? "text-gray-800" : "text-white"
-                      }`}
-                    >
-                      {coupon?.discountPercentage}%
-                    </td>
-                    <td
-                      className={`p-4 ${
-                        theme === "light" ? "text-gray-800" : "text-white"
-                      }`}
-                    >
-                      {coupon?.allProperties ? "Yes" : "No"}
-                    </td>
-                    <td
-                      className={`p-4 ${
-                        theme === "light" ? "text-gray-800" : "text-white"
-                      }`}
-                    >
-                      {coupon?.availability ? (
-                        <span className="text-green-500 font-semibold">
-                          Yes
-                        </span>
-                      ) : (
-                        <span className="text-red-500 font-semibold">No</span>
-                      )}
-                    </td>
-
-                    <td
-                      className={`p-4 ${
-                        theme === "light" ? "text-gray-800" : "text-white"
-                      }`}
-                    >
-                      <button
-                        className="bg-yellow-500 text-white py-1 px-3 rounded-lg hover:bg-yellow-600 transition duration-300"
-                        onClick={() => handleEdit(coupon)}
+              {coupons?.length ? (
+                coupons.map((coupon) => (
+                  <tr key={coupon._id}>
+                    <td>{coupon.code}</td>
+                    <td>{coupon.description}</td>
+                    <td>{coupon.expiryDate}</td>
+                    <td>{coupon.discountPercentage}%</td>
+                    <td>
+                      <span
+                        className={`font-semibold ${
+                          coupon.availability
+                            ? "text-success"
+                            : "text-error"
+                        }`}
                       >
-                        <FaEdit className="mr-2" />
+                        {coupon.availability ? "Yes" : "No"}
+                      </span>
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-xs btn-warning"
+                        onClick={() => {
+                          setEditCoupon(coupon);
+                          setShowEditModal(true);
+                        }}
+                      >
+                        <FaEdit />
                       </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td
-                    colSpan="7"
-                    className="p-4 text-center text-gray-500 italic"
-                  >
+                  <td colSpan="6" className="text-center italic opacity-60">
                     No coupons added yet.
                   </td>
                 </tr>
@@ -313,122 +168,55 @@ const ManageCoupons = () => {
 
       {/* Add Coupon Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div
-            className={` rounded-lg shadow-lg p-6 w-11/12 max-w-md ${
-              theme === "light" ? "bg-white" : "bg-gray-800"
-            }`}
-          >
-            <h2 className="text-xl font-bold mb-4">Add New Coupon</h2>
+        <div className="modal modal-open">
+          <div className="modal-box bg-base-100">
+            <h3 className="font-bold text-lg mb-4">Add New Coupon</h3>
             <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label
-                  htmlFor="code"
-                  className={` whitespace-nowrap ${
-                    theme === "light" ? "text-gray-800" : "text-white"
-                  }`}
-                >
-                  Coupon Code
-                </label>
-                <input
-                  type="text"
-                  id="code"
-                  name="code"
-                  value={newCoupon.code}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
-                  placeholder="Enter coupon code"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="description"
-                  className={` whitespace-nowrap ${
-                    theme === "light" ? "text-gray-800" : "text-white"
-                  }`}
-                >
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={newCoupon.description}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
-                  placeholder="Enter coupon description"
-                  rows="3"
-                  required
-                ></textarea>
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="expiryDate"
-                  className={`block text-sm font-semibold  mb-1 ${
-                    theme === "light" ? "text-gray-700" : "text-white"
-                  }`}
-                >
-                  Expiry Date
-                </label>
-                <DatePicker
-                  id="expiryDate"
-                  selected={newCoupon.expiryDate}
-                  onChange={handleDateChange}
-                  dateFormat="dd/MM/yyyy"
-                  className="w-full p-2 border rounded-lg"
-                  placeholderText="Select expiry date"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="discountPercentage"
-                  className="block text-sm font-semibold text-gray-700 mb-1"
-                >
-                  Discount Percentage
-                </label>
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  id="discountPercentage"
-                  name="discountPercentage"
-                  value={newCoupon.discountPercentage}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
-                  placeholder="Enter discount (%)"
-                  required
-                />
-              </div>
-              <div className="mb-4 flex items-center">
-                <input
-                  type="checkbox"
-                  id="allProperties"
-                  name="allProperties"
-                  checked={newCoupon.allProperties}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                <label
-                  htmlFor="allProperties"
-                  className="text-sm font-semibold text-gray-700"
-                >
-                  Apply to All Properties
-                </label>
-              </div>
+              <input
+                name="code"
+                value={newCoupon.code}
+                onChange={handleChange}
+                placeholder="Coupon Code"
+                className="input input-bordered w-full mb-3"
+                required
+              />
+              <textarea
+                name="description"
+                value={newCoupon.description}
+                onChange={handleChange}
+                placeholder="Description"
+                className="textarea textarea-bordered w-full mb-3"
+                required
+              />
+              <DatePicker
+                selected={newCoupon.expiryDate}
+                onChange={(date) =>
+                  setNewCoupon({ ...newCoupon, expiryDate: date })
+                }
+                dateFormat="dd/MM/yyyy"
+                className="input input-bordered w-full mb-3"
+                placeholderText="Expiry Date"
+                required
+              />
+              <input
+                type="number"
+                name="discountPercentage"
+                value={newCoupon.discountPercentage}
+                onChange={handleChange}
+                placeholder="Discount %"
+                className="input input-bordered w-full mb-4"
+                required
+              />
 
-              <div className="flex justify-end space-x-4">
+              <div className="modal-action">
                 <button
                   type="button"
-                  className="py-2 px-4 bg-gray-600 rounded-lg hover:bg-pink-600 transition duration-300"
+                  className="btn"
                   onClick={() => setShowModal(false)}
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
-                >
+                <button type="submit" className="btn btn-primary">
                   Add Coupon
                 </button>
               </div>
@@ -438,70 +226,41 @@ const ManageCoupons = () => {
       )}
 
       {/* Edit Coupon Modal */}
-      {showEditModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-11/12 max-w-md">
-            <h2 className="text-xl font-bold mb-4">Edit Coupon</h2>
+      {showEditModal && editCoupon && (
+        <div className="modal modal-open">
+          <div className="modal-box bg-base-100">
+            <h3 className="font-bold text-lg mb-4">Edit Coupon</h3>
             <form onSubmit={handleEditSubmit}>
-              <div className="mb-4">
-                <label
-                  htmlFor="editCode"
-                  className="block text-sm font-semibold text-gray-700 mb-1"
-                >
-                  Coupon Code
-                </label>
-                <input
-                  type="text"
-                  id="editCode"
-                  name="code"
-                  value={editCoupon.code}
-                  onChange={(e) =>
-                    setEditCoupon({ ...editCoupon, code: e.target.value })
-                  }
-                  className="w-full p-2 border rounded-lg"
-                  placeholder="Enter coupon code"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="editAvailability"
-                  className={`block text-sm font-semibold  mb-1 ${
-                    theme === "light" ? "text-gray-700" : "text-white"
-                  }`}
-                >
-                  Availability
-                </label>
-                <select
-                  id="editAvailability"
-                  name="availability"
-                  value={editCoupon.availability}
-                  onChange={(e) =>
-                    setEditCoupon({
-                      ...editCoupon,
-                      availability: e.target.value === "true",
-                    })
-                  }
-                  className="w-full p-2 border rounded-lg"
-                  required
-                >
-                  <option value="true">Available</option>
-                  <option value="false">Not Available</option>
-                </select>
-              </div>
+              <input
+                value={editCoupon.code}
+                onChange={(e) =>
+                  setEditCoupon({ ...editCoupon, code: e.target.value })
+                }
+                className="input input-bordered w-full mb-3"
+              />
+              <select
+                value={editCoupon.availability}
+                onChange={(e) =>
+                  setEditCoupon({
+                    ...editCoupon,
+                    availability: e.target.value === "true",
+                  })
+                }
+                className="select select-bordered w-full mb-4"
+              >
+                <option value="true">Available</option>
+                <option value="false">Not Available</option>
+              </select>
 
-              <div className="flex justify-end space-x-4">
+              <div className="modal-action">
                 <button
                   type="button"
-                  className="py-2 px-4 bg-gray-300 rounded-lg hover:bg-gray-400 transition duration-300"
+                  className="btn"
                   onClick={() => setShowEditModal(false)}
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
-                >
+                <button type="submit" className="btn btn-primary">
                   Save Changes
                 </button>
               </div>
