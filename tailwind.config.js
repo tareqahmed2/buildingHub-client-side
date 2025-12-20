@@ -8,9 +8,9 @@ module.exports = {
     extend: {},
   },
   plugins: [
-    require("daisyui"), // DaisyUI ব্যবহার না করলে এই লাইন remove করো
+    require("daisyui"), 
   ],
   daisyui: {
-    themes: "all", // সব DaisyUI theme
+    themes: "all", 
   },
 };
